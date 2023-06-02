@@ -60,7 +60,7 @@ function validateUser(user) {
     const schema = Joi.object({
         firstName: Joi.string().trim().min(3).max(20).required(),
         lastName: Joi.string().trim().min(3).max(20).required(),
-        email: Joi.string().required().email(),
+        email: Joi.string().required(),
         hash_password: joiPassword
             .string()
             .min(8)
@@ -78,5 +78,5 @@ function validateUser(user) {
 }
 
 exports.User = User;
-exports.validateUser = validateUser;
+exports.validate = validateUser;
 exports.userSchema = userSchema;

@@ -30,11 +30,12 @@ class PhotoController {
 
     async uploadSingleImage(req, res) {
         if (req.method === "POST") {
-            const file = req.files
-            const newPath = await cloudinary.uploader.upload(file)
+            const file = req.file
+            const { path } = file
+            const newPath = await cloudinary.uploader.upload(path)
             res.status(200).send({
                 message: "Images Uploaded Successfully",
-                data: newPath
+                data: newPath.url
             })
         }else {
             res.status(405).send({

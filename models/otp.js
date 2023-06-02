@@ -2,14 +2,15 @@ const mongoose = require("mongoose");
 
 const otpSchema = new mongoose.Schema({
     otp: {
-        type: Number
+        type: String
     },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
-    }
-});
+    },
+    createdAt: { type: Date, default: Date.now, index: {expires: 300}}
+}, {timestamps: true});
 
-const Otp = mongoose.mongo("otp", otpSchema);
+const Otp = mongoose.model("otp", otpSchema);
 
-module.exports = Otp;
+exports.Otp = Otp;

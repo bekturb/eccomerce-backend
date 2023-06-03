@@ -1,7 +1,7 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 const Joi = require("joi");
-// const bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt");
 
 const otpSchema = new mongoose.Schema({
     otp: {
@@ -14,11 +14,11 @@ const otpSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now, index: {expires: 300}}
 }, {timestamps: true});
 
-// otpSchema.pre("save", async function (next) {
-//     const salt = await bcrypt.genSalt(Number(process.env.SALT));
-//     this.otp = await bcrypt.hash(`${this.otp}`, salt);
-//     next();
-// })
+otpSchema.pre("save", async function (next) {
+    const salt = await bcrypt.genSalt(Number(process.env.SALT));
+    this.otp = await bcrypt.hash(`${this.otp}`, salt);
+    next();
+})
 
 const Otp = mongoose.model("otp", otpSchema);
 function validateVerify(req) {

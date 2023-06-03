@@ -1,5 +1,8 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
+const Joi = require("joi");
+const { joiPasswordExtendCore } = require('joi-password');
+const joiPassword = Joi.extend(joiPasswordExtendCore);
 const {User, validate} = require("../models/user");
 const {Otp, validateVerify} = require("../models/otp");
 const bcrypt = require("bcrypt");
@@ -10,6 +13,11 @@ const authToken =  process.env.AUTH_TOKEN;
 const client = require('twilio')(accountSid, authToken);
 
 class UserController {
+
+    async getMe(req, res) {
+        const user = await User.findById(req.user._id).select("-password");
+        res.send(user);
+    }
 
     async register(req, res) {
 
@@ -74,27 +82,142 @@ class UserController {
 
         const {error} = validateVerify(req.body);
         if (error)
-            return res.status(400).send(error.details[0].message)
+            return res.status(400).send(error.details[0].message);
 
-        const { otp, email } = req.body;
-
-        let OTP = await Otp.findOne({otp: otp});
+        let OTP = await Otp.findOne();
         if (!OTP)
-            return res.status(400).send('Invalid Otp number');
+            return res.status(400).send('Invalid OTP number');
 
-        const isExist = await User.exists({ _id: OTP.userId });
-        if (!isExist) {
+        const isMatch = await bcrypt.compare(req.body.otp, OTP.otp);
+
+        if (!isMatch) {
             return res.send("Incorrect OTP or it has been expired.");
         }
 
-       const user =  User.findById(OTP.userId);
+        const user = await User.findById(OTP.userId);
         if (user) {
             await User.findByIdAndUpdate(OTP.userId, { verified: true });
             await Otp.deleteOne({ _id: OTP._id });
-            res.send(`${user.email} has been successfully verified`);
+            res.status(200).send(`${user.email} has been successfully verified`);
         } else {
-            res.send("Incorrect OTP or it has been expired.");
+            res.status(400).send("Incorrect OTP or it has been expired.");
         }
+    }
+
+    async getAll(req, res) {
+        const users = await User.find()
+            .sort("firstName")
+            .select({password: 0})
+        res.send(users)
+    }
+
+    async getSingle(req,res) {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id))
+            return res.status(404).send("Invalid Id");
+
+        let user = await User.findById(req.params.id)
+            .select({hash_password: 0});
+        if (!user) return res.status(404).send({message: "No user for the given Id"});
+
+        return res.status(200).send(user)
+    }
+
+    async updateProfile(req, res) {
+        const updateProfileSchema = Joi.object({
+            firstName: Joi.string().trim().min(3).max(20).required(),
+            lastName: Joi.string().trim().min(3).max(20).required(),
+            profilePicture: Joi.string(),
+        });
+
+        const {error} = updateProfileSchema.validate(req.body);
+        if (error)
+            return res.status(400).send({message: error.details[0].message});
+
+        let user = await User.findByIdAndUpdate(req.user._id, {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            profilePicture: req.body.profilePicture,
+        });
+
+        if (!user)
+            return res.status(404).send("No user for the given Id");
+
+        return res.status(200).send({message: "You successfully changed your profile"})
+    }
+
+    async changePassword(req,res){
+
+        const passwordSchema = Joi.object({
+            oldPassword: joiPassword
+                .string()
+                .min(8)
+                .minOfSpecialCharacters(1)
+                .minOfNumeric(1)
+                .noWhiteSpaces()
+                .onlyLatinCharacters()
+                .required(),
+            newPassword: joiPassword
+                .string()
+                .min(8)
+                .minOfSpecialCharacters(1)
+                .minOfNumeric(1)
+                .noWhiteSpaces()
+                .onlyLatinCharacters()
+                .required(),
+            confirmPassword: joiPassword
+                .string()
+                .min(8)
+                .minOfSpecialCharacters(1)
+                .minOfNumeric(1)
+                .noWhiteSpaces()
+                .onlyLatinCharacters()
+                .required()
+        });
+
+        const {error} = passwordSchema.validate(req.body);
+        if (error)
+            return res.status(400).send({message: error.details[0].message});
+
+        let user = await User.findById(req.user._id).select("+password");
+
+        let comparePassword = await bcrypt.compare(req.body.oldPassword, user.hash_password);
+        if (!comparePassword)
+            return res.status(400).send('Password wasn\'t found');
+
+        if (req.body.newPassword !== req.body.confirmPassword){
+            return res.status(400).send('Password does not match');
+        }
+
+        const salt = await bcrypt.genSalt(Number(process.env.SALT));
+        const password = await bcrypt.hash(req.body.newPassword, salt);
+
+        user = await User.findByIdAndUpdate(req.user._id, {
+            hash_password: password
+        }, {new: true});
+
+        if (!user)
+            return res.status(404).send({message: "No user for the given Id"});
+
+        res.status(200).send({message: "You successfully changed your password"})
+    }
+
+    async updateRole(req, res) {
+        const updateRoleSchema = Joi.object({
+            role: Joi.string().valid("user", "admin")
+        });
+
+        const {error} = updateRoleSchema.validate(req.body);
+        if (error)
+            return res.status(400).send({message: error.details[0].message});
+
+        let user = await User.findByIdAndUpdate(req.params.id, {
+            role: req.body.role
+        });
+
+        if (!user)
+            return res.status(404).send("No user for the given Id");
+
+        return res.status(200).send({message: "User role changed successfully"})
     }
 }
 

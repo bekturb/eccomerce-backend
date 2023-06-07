@@ -219,6 +219,49 @@ class UserController {
 
         return res.status(200).send({message: "User role changed successfully"})
     }
+
+    async resetPassword(req, res) {
+
+        const passwordSchema = Joi.object({
+            email: Joi.string().email(),
+            newPassword: joiPassword
+                .string()
+                .min(8)
+                .minOfSpecialCharacters(1)
+                .minOfNumeric(1)
+                .noWhiteSpaces()
+                .onlyLatinCharacters()
+                .required(),
+            confirmPassword: joiPassword
+                .string()
+                .min(8)
+                .minOfSpecialCharacters(1)
+                .minOfNumeric(1)
+                .noWhiteSpaces()
+                .onlyLatinCharacters()
+                .required(),
+        });
+
+        const {error} = passwordSchema.validate(req.body);
+        if (error)
+            return res.status(400).send({message: error.details[0].message});
+
+        let user = await User.findOne({email: req.body.email});
+
+        if (!user) return res.status(400).send({message: "Not found user"});
+
+        if (req.body.newPassword !== req.body.confirmPassword){
+            return res.status(400).send('Password does not match');
+        }
+
+        const salt = await bcrypt.genSalt(Number(process.env.SALT));
+        user.hash_password = await bcrypt.hash(req.body.newPassword, salt);
+
+        user = await user.save();
+
+        res.status(200).send("password reset successfully")
+
+    }
 }
 
 module.exports = new UserController()

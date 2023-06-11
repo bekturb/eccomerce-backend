@@ -1,5 +1,6 @@
 const {Category, validate} = require("../models/category");
-const slugify = require("slugify")
+const slugify = require("slugify");
+const {createCategories} = require("../utils/createCategories");
 
 class CategoryController {
 
@@ -28,7 +29,11 @@ class CategoryController {
 
     async getCategories (req,res) {
         const categories = await Category.find().sort("name");
-        res.status(200).send(categories)
+
+        if (categories){
+            const categoryList = createCategories(categories);
+            res.status(200).send(categoryList)
+        }
     }
 }
 

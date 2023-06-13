@@ -7,7 +7,7 @@ const shopOtpSchema = new mongoose.Schema({
     otp: {
         type: String
     },
-    userId: {
+    shopId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Shop"
     },
@@ -29,5 +29,4 @@ function validateVerify(req) {
 }
 
 exports.validateVerify = validateVerify;
-
 exports.ShopOtp = ShopOtp;

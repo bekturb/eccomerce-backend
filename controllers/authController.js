@@ -1,7 +1,6 @@
 const {User} = require("../models/user")
 const {validate} = require("../models/auth")
 const bcrypt = require("bcrypt");
-const _ = require("lodash");
 const sendEmail = require("../utils/sendEmail");
 const otpGenerator = require("otp-generator");
 const {Otp} = require("../models/otp");

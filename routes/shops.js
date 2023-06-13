@@ -6,7 +6,7 @@ const admin = require("../middlewares/admin");
 
 router.post("/register", shopController.register);
 // router.get("/me", [auth], shopController.getMe);
-// router.post("/verify", shopController.verify);
+router.post("/verify", shopController.verify);
 // router.get("/get-user/:id", shopController.getSingle);
 // router.get("/", [auth, admin], shopController.getAll);
 // router.put("/block-user/:id", [auth, admin], shopController.blockUser);

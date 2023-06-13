@@ -7,13 +7,15 @@ const {ShopOtp, validateVerify} = require("../models/shopOtp");
 const bcrypt = require("bcrypt");
 const sendEmail = require("../utils/sendEmail");
 const otpGenerator = require("otp-generator");
-const Shop = require("../models/shop");
+const {Shop, validateShop} = require("../models/shop");
 const {validate, User} = require("../models/user");
+const {Otp} = require("../models/otp");
 
 class ShopController {
 
     async register (req, res) {
-        const {error} = validate(req.body);
+
+        const {error} = validateShop(req.body);
         if (error)
             return res.status(400).send(error.details[0].message);
 
@@ -25,6 +27,7 @@ class ShopController {
             name: req.body.name,
             email: req.body.email,
             password: req.body.password,
+            description: req.body.description,
             avatar: req.body.avatar,
             address: req.body.address,
             phoneNumber: req.body.phoneNumber,
@@ -39,10 +42,36 @@ class ShopController {
         });
 
         await sendEmail(shop.email, "Verify your email", `Your OTP is ${OTP}.\nDo not share with anyone`);
-        await ShopOtp.create({otp: OTP, userId: shop._id});
+        await ShopOtp.create({otp: OTP, shopId: shop._id});
 
-        shop = await user.save();
+        shop = await shop.save();
         return res.status(201).send("OTP sent. Valid for only 2 minutes");
+    }
+
+    async verify(req, res) {
+
+        const {error} = validateVerify(req.body);
+        if (error)
+            return res.status(400).send(error.details[0].message);
+
+        let OTP = await ShopOtp.findOne();
+        if (!OTP)
+            return res.status(400).send('Invalid OTP number');
+
+        const isMatch = await bcrypt.compare(req.body.otp, OTP.otp);
+
+        if (!isMatch) {
+            return res.send("Incorrect OTP or it has been expired.");
+        }
+
+        const shop = await Shop.findById(OTP.shopId);
+        if (shop) {
+            await Shop.findByIdAndUpdate(OTP.shopId, { verified: true });
+            await ShopOtp.deleteOne({ _id: OTP._id });
+            res.status(200).send(`${shop.email} has been successfully verified`);
+        } else {
+            res.status(400).send("Incorrect OTP or it has been expired.");
+        }
     }
 }
 

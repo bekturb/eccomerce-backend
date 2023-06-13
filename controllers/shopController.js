@@ -13,6 +13,11 @@ const {Otp} = require("../models/otp");
 
 class ShopController {
 
+    async getMe(req, res) {
+        const shop = await Shop.findById(req.user._id).select("-password");
+        res.send(shop);
+    }
+
     async register (req, res) {
 
         const {error} = validateShop(req.body);

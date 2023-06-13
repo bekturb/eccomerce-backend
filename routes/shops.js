@@ -5,7 +5,7 @@ const auth = require("../middlewares/auth");
 const admin = require("../middlewares/admin");
 
 router.post("/register", shopController.register);
-// router.get("/me", [auth], shopController.getMe);
+router.get("/me", [auth], shopController.getMe);
 router.post("/verify", shopController.verify);
 // router.get("/get-user/:id", shopController.getSingle);
 // router.get("/", [auth, admin], shopController.getAll);

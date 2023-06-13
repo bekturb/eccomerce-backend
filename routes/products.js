@@ -5,8 +5,12 @@ const auth = require("../middlewares/auth");
 
 router.post("/", [auth], ProductController.create);
 router.get("/", ProductController.getAll);
-router.get("/:id", ProductController.getOne);
-router.put("/:id", [auth], ProductController.update);
-router.delete("/:id", [auth], ProductController.delete);
+router.get("/get-product/:id", ProductController.getOne);
+router.put("/update/:id", [auth], ProductController.update);
+router.delete("/delete/:id", [auth], ProductController.delete);
+router.put("/add-review", [auth], ProductController.createProductReview);
+router.get("/:productId/all-reviews", ProductController.getAllReviews);
+router.delete("/:productId/reviews/:reviewId", [auth], ProductController.deleteReview);
+router.post("/wishlist", [auth], ProductController.addToWishlist);
 
 module.exports = router;

@@ -33,6 +33,12 @@ const userSchema = new mongoose.Schema({
         unique: false,
         minLength: 8
     },
+    phoneNumber: {
+        type: Number
+    },
+    profilePicture: {
+        type: String
+    },
     verified: {
         type: Boolean,
         required: true,
@@ -43,9 +49,32 @@ const userSchema = new mongoose.Schema({
         enum: ["user", "admin"],
         default: "user"
     },
-    profilePicture: {
-        type: String
+    isBlocked: {
+        type: Boolean,
+        default: false
     },
+    addresses:[
+        {
+            country: {
+                type: String,
+            },
+            city:{
+                type: String,
+            },
+            address1:{
+                type: String,
+            },
+            address2:{
+                type: String,
+            },
+            zipCode:{
+                type: Number,
+            },
+            addressType:{
+                type: String,
+            },
+        }
+    ],
     wishList: [{type: mongoose.Schema.Types.ObjectId, ref: "Projects"}],
 }, {timestamps: true});
 
@@ -69,9 +98,9 @@ function validateUser(user) {
             .noWhiteSpaces()
             .onlyLatinCharacters()
             .required(),
+        phoneNumber: Joi.number(),
         role: Joi.string().valid("user", "admin"),
         profilePicture: Joi.string(),
-        wishList: Joi.array(),
     });
 
     return schema.validate(user);

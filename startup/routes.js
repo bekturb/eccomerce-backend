@@ -4,8 +4,10 @@ const errorMiddleware = require("../middlewares/error");
 const bodyParser = require("body-parser");
 const productsRoute = require("../routes/products");
 const usersRoute = require("../routes/users");
+const shopsRoute = require("../routes/shops");
 const authRoute = require("../routes/auth");
 const categoryRoute = require("../routes/categories");
+const couponRoute = require("../routes/coupons");
 const cartRoute = require("../routes/carts");
 const passwordResetRoute = require("../routes/resetPassword");
 
@@ -19,9 +21,11 @@ module.exports = function (app) {
     app.use("/uploads", express.static("uploads"));
     app.use('/api/products', productsRoute);
     app.use('/api/users', usersRoute);
+    app.use('/api/shops', shopsRoute);
     app.use('/api/users/cart', cartRoute);
     app.use('/api/login', authRoute);
     app.use('/api/categories', categoryRoute);
+    app.use('/api/coupon', couponRoute);
     app.use('/api/password-reset', passwordResetRoute);
 
     app.use('/api/upload', imagesRoute);

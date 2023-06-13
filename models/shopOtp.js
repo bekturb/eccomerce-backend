@@ -3,24 +3,24 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 const bcrypt = require("bcrypt");
 
-const otpSchema = new mongoose.Schema({
+const shopOtpSchema = new mongoose.Schema({
     otp: {
         type: String
     },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "users"
+        ref: "Shop"
     },
     createdAt: { type: Date, default: Date.now, index: {expires: 300}}
 }, {timestamps: true});
 
-otpSchema.pre("save", async function (next) {
+shopOtpSchema.pre("save", async function (next) {
     const salt = await bcrypt.genSalt(Number(process.env.SALT));
     this.otp = await bcrypt.hash(`${this.otp}`, salt);
     next();
-})
+});
 
-const Otp = mongoose.model("otp", otpSchema);
+const ShopOtp = mongoose.model("ShopOtps", shopOtpSchema);
 function validateVerify(req) {
     const schema = Joi.object({
         otp: Joi.string().required(),
@@ -30,4 +30,4 @@ function validateVerify(req) {
 
 exports.validateVerify = validateVerify;
 
-exports.Otp = Otp;
+exports.ShopOtp = ShopOtp;

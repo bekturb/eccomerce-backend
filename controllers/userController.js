@@ -49,6 +49,7 @@ class UserController {
             lastName: req.body.lastName,
             email: req.body.email,
             hash_password: req.body.hash_password,
+            phoneNumber: req.body.phoneNumber,
             profilePicture: req.body.profilePicture
         });
 
@@ -127,6 +128,7 @@ class UserController {
             firstName: Joi.string().trim().min(3).max(20).required(),
             lastName: Joi.string().trim().min(3).max(20).required(),
             profilePicture: Joi.string(),
+            phoneNumber: Joi.number(),
         });
 
         const {error} = updateProfileSchema.validate(req.body);
@@ -137,6 +139,7 @@ class UserController {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             profilePicture: req.body.profilePicture,
+            phoneNumber: req.body.phoneNumber,
         });
 
         if (!user)
@@ -259,8 +262,81 @@ class UserController {
 
         user = await user.save();
 
-        res.status(200).send("password reset successfully")
+        res.status(200).send("password reset successfully");
 
+    }
+
+    async blockUser (req, res) {
+        const { id } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(id))
+            return res.status(404).send("Invalid Id");
+
+        const blockUser = await User.findByIdAndUpdate(id, {
+            isBlocked: true,
+        }, {
+            new: true,
+        });
+        res.status(200).send(blockUser)
+    }
+
+    async unBlockUser (req, res) {
+        const { id } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(id))
+            return res.status(404).send("Invalid Id");
+
+        const blockUser = await User.findByIdAndUpdate(id, {
+            isBlocked: false,
+        }, {
+            new: true,
+        });
+        res.status(200).send(blockUser)
+    }
+
+    async updateAddresses (req,res) {
+        const user = await User.findById(req.user._id);
+
+        const sameTypeAddress = user.addresses.find(
+            (address) => address.addressType === req.body.addressType
+        );
+
+        if (sameTypeAddress) {
+           return res.status(400).send(`${req.body.addressType} address already exists`)
+        }
+
+        const existsAddress = user.addresses.find(
+            (address) => address._id.toString() === req.body._id
+        );
+
+        if (existsAddress) {
+            Object.assign(existsAddress, req.body);
+        } else {
+            user.addresses.push(req.body);
+        }
+
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            user,
+        });
+    }
+
+    async deleteUserAddress (req, res) {
+        const userId = req.user._id;
+        const addressId = req.params.id;
+
+        await User.updateOne(
+            {
+                _id: userId,
+            },
+            { $pull: { addresses: { _id: addressId } } }
+        );
+
+        const user = await User.findById(userId);
+
+        res.status(200).json({ success: true, user });
     }
 }
 

@@ -13,10 +13,6 @@ const productSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
-    price: {
-        type: Number,
-        required: true,
-    },
     description: {
         type: String,
         required: true,
@@ -26,6 +22,20 @@ const productSchema = new mongoose.Schema({
        type: String,
        required: true
     },
+    tags: {
+        type: String,
+    },
+    originalPrice: {
+        type: Number,
+    },
+    discountPrice: {
+        type: Number,
+        required: [true, "Please enter your product price!"],
+    },
+    color: {
+        type: String,
+        required: true
+    },
     quantity: {
         type: Number,
         required: true
@@ -33,16 +43,29 @@ const productSchema = new mongoose.Schema({
     offer: {
         type: Number,
     },
+    shopId: {
+        type: String,
+        required: true,
+    },
+    shop: {
+        type: Object,
+        required: true,
+    },
+    sold: {
+       type: Number,
+       required: true,
+       default: 0,
+        select: false
+    },
     stock: {
         type: String,
         required: true
     },
-    images: [
-        {
-            type: Array,
-            required: true
-        }
-    ],
+    images: {
+        type: Array,
+        required: true
+    },
+
     numOfReviews: {
         type: Number,
         default: 0
@@ -57,20 +80,20 @@ const productSchema = new mongoose.Schema({
                 type: String,
                 required: true
             },
-            postedBy: {type: mongoose.Schema.Types.ObjectId, ref: "User", required: true},
+            postedBy: {type: mongoose.Schema.Types.ObjectId, ref: "users", required: true},
         }
     ],
     totalRating: {
-        type: String,
+        type: Number,
         default: 0,
     },
-    category: {type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true},
+    category: {type: mongoose.Schema.Types.ObjectId, ref: "Categories", required: true},
     information: {
         type: Map,
         of: mongoose.Schema.Types.Mixed,
         default: {},
     },
-    createdBy: {type: mongoose.Schema.Types.ObjectId, ref: "User", required: true},
+    createdBy: {type: mongoose.Schema.Types.ObjectId, ref: "users", required: true},
 }, {timestamps: true});
 
 const Product = mongoose.model("Products", productSchema);
@@ -82,6 +105,7 @@ function validateProject(project) {
         price: Joi.number().required(),
         description: Joi.string().required().min(10),
         brand: Joi.string().required(),
+        color: Joi.string().required(),
         offer: Joi.number(),
         quantity: Joi.number(),
         stock: Joi.string().required(),
@@ -92,6 +116,8 @@ function validateProject(project) {
         category: Joi.string().required(),
         information: Joi.object(),
         createdBy: Joi.string(),
+        shopId: Joi.string().required(),
+        shop: Joi.object()
     });
     return schema.validate(project);
 }

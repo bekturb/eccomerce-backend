@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 
 const productSchema = new mongoose.Schema({
-
     name: {
         type: String,
         required: true,
@@ -22,6 +21,7 @@ const productSchema = new mongoose.Schema({
        type: String,
        required: true
     },
+    category: {type: mongoose.Schema.Types.ObjectId, ref: "Categories", required: true},
     tags: [],
     originalPrice: {
         type: Number,
@@ -46,7 +46,6 @@ const productSchema = new mongoose.Schema({
        type: Number,
        required: true,
        default: 0,
-        select: false
     },
     stock: {
         type: String,
@@ -80,7 +79,6 @@ const productSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
-    category: {type: mongoose.Schema.Types.ObjectId, ref: "Categories", required: true},
 }, {timestamps: true});
 
 const Product = mongoose.model("Products", productSchema);

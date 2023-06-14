@@ -3,6 +3,7 @@ const cors = require("cors");
 const errorMiddleware = require("../middlewares/error");
 const bodyParser = require("body-parser");
 const productsRoute = require("../routes/products");
+const eventsRoute = require("../routes/events");
 const usersRoute = require("../routes/users");
 const shopsRoute = require("../routes/shops");
 const authRoute = require("../routes/auth");
@@ -22,6 +23,7 @@ module.exports = function (app) {
     app.use(bodyParser.json());
     app.use("/uploads", express.static("uploads"));
     app.use('/api/products', productsRoute);
+    app.use('/api/events', eventsRoute);
     app.use('/api/users', usersRoute);
     app.use('/api/shops', shopsRoute);
     app.use('/api/users/cart', cartRoute);

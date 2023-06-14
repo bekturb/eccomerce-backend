@@ -9,13 +9,26 @@ const couponSchema = new mongoose.Schema({
         unique: true,
         upperCase: true
     },
-    expiry: {
-        type: Date,
+    value:{
+        type: Number,
         required: true,
     },
-    discount: {
+    minAmount:{
         type: Number,
-        required: true
+    },
+    maxAmount:{
+        type: Number,
+    },
+    shopId:{
+        type: String,
+        required: true,
+    },
+    selectedProduct:{
+        type: String,
+    },
+    createdAt:{
+        type: Date,
+        default: Date.now(),
     }
 }, {timestamps: true});
 
@@ -24,8 +37,11 @@ const Coupon = mongoose.model("Coupons", couponSchema);
 function validateCoupon(user) {
     const schema = Joi.object({
         name: Joi.string().required().uppercase(),
-        expiry: Joi.date().required(),
-        discount: Joi.number().required()
+        value: Joi.number(),
+        minAmount: Joi.number(),
+        maxAmount: Joi.number(),
+        shopId: Joi.string(),
+        selectedProduct: Joi.string(),
     });
 
     return schema.validate(user);

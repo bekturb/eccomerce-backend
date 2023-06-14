@@ -5,13 +5,17 @@ class CouponController {
 
     async create(req, res) {
         const {error} = validate(req.body);
-        if (error) return res.status(400).send(error.details[0].message)
+        if (error) return res.status(400).send(error.details[0].message);
 
-        let coupon = new Coupon({
+        const isCouponCodeExists = await Coupon.find({
             name: req.body.name,
-            expiry: req.body.expiry,
-            discount: req.body.discount
         });
+
+        if (isCouponCodeExists.length !== 0) {
+            return res.status(400).send("Coupon code already exists!")
+        }
+
+        let coupon = new Coupon(req.body);
         coupon = await coupon.save();
         res.status(201).send(coupon)
     }
@@ -21,29 +25,28 @@ class CouponController {
         res.send(coupons)
     }
 
-    async update(req, res) {
+    async getOne(req, res) {
         if (!mongoose.Types.ObjectId.isValid(req.params.id))
             return res.status(404).send("Invalid Id");
 
-        const {error} = validate(req.body);
-        if (error) return res.status(400).send(error.details[0].message);
+        let coupon = await Coupon.find({ shopId: req.user._id });
+        if (!coupon) return res.status(404).send("No coupon for the given Id");
 
-        let coupon = await Coupon.findByIdAndUpdate(req.params.id, {
-            name: req.body.name,
-            expiry: req.body.expiry,
-            discount: req.body.discount
-        }, {
-            new: true
-        })
-        if (!coupon)
-            return res.status(404).send("No coupon for the given Id");
+        res.send(coupon)
+    }
+
+    async getCouponValue(req, res) {
+        let coupon = await Coupon.findOne({ name: req.params.name });
+        if (!coupon) return res.status(404).send("No coupon for the given name");
+
         res.send(coupon)
     }
 
     async delete(req, res) {
         if (!mongoose.Types.ObjectId.isValid(req.params.id))
             return res.status(404).send("Invalid Id");
-        let coupon = await Coupon.findByIdAndRemove(req.params.id);
+
+        let coupon = await Coupon.findByIdAndDelete(req.params.id);
         if (!coupon)
             return res.status(404).send("No coupon for the given Id");
         res.send(coupon)

@@ -1,47 +1,46 @@
-const fs = require("fs")
-const { cloudinary } = require("../middlewares/cloudinary");
+const fs = require("fs");
+const {
+    cloudinaryUploadImg,
+    cloudinaryDeleteImg,
+} = require("../utils/cloudinary");
+
 class PhotoController {
     async create(req, res) {
-
-        if (req.method === "POST"){
-            const urls = []
-
-            const files = req.files
-
-            for (const file of files){
-                const { path } = file
-
-                const newPath = await cloudinary.uploader.upload(path)
-
-                urls.push(newPath)
-
-                fs.unlinkSync(path)
-            }
-            res.status(200).send({
-                message: "Images Uploaded Successfully",
-                data: urls
-            })
-        }else{
-            res.status(405).send({
-                err: "Images not uploaded successfully"
-            })
+        const uploader = (path) => cloudinaryUploadImg(path, "images");
+        const urls = [];
+        const files = req.files;
+        for (const file of files) {
+            const {path} = file;
+            const newpath = await uploader(path);
+            console.log(newpath);
+            urls.push(newpath);
+            fs.unlinkSync(path);
         }
+        const images = urls.map((file) => {
+            return file;
+        });
+        res.status(200).send(images)
+    }
+
+    async deleteImages(req, res) {
+        const {id} = req.params;
+        const deleted = cloudinaryDeleteImg(id, "images");
+        res.status(200).send({message: "Deleted"});
     }
 
     async uploadSingleImage(req, res) {
-        if (req.method === "POST") {
-            const file = req.file
-            const { path } = file
-            const newPath = await cloudinary.uploader.upload(path)
-            res.status(200).send({
-                message: "Images Uploaded Successfully",
-                data: newPath.url
-            })
-        }else {
-            res.status(405).send({
-                err: "Images not uploaded successfully"
-            })
-        }
+        const uploader = (path) => cloudinaryUploadImg(path, "image");
+        const file = req.file;
+        const {path} = file;
+        const newPath = await uploader(path);
+        fs.unlinkSync(path);
+        res.status(200).send(newPath)
+    }
+
+    async deleteImage(req, res) {
+        const {id} = req.params;
+        const deleted = cloudinaryDeleteImg(id, "image");
+        res.status(200).send({message: "Deleted"});
     }
 }
 

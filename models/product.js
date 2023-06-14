@@ -32,16 +32,10 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: [true, "Please enter your product price!"],
     },
-    color: {
-        type: String,
-        required: true
-    },
+    color: [],
     quantity: {
         type: Number,
         required: true
-    },
-    offer: {
-        type: Number,
     },
     shopId: {
         type: String,
@@ -61,10 +55,12 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    images: {
-        type: Array,
-        required: true
-    },
+    images: [
+        {
+            url: String,
+            public_id: String,
+        },
+    ],
 
     numOfReviews: {
         type: Number,
@@ -88,11 +84,6 @@ const productSchema = new mongoose.Schema({
         default: 0,
     },
     category: {type: mongoose.Schema.Types.ObjectId, ref: "Categories", required: true},
-    information: {
-        type: Map,
-        of: mongoose.Schema.Types.Mixed,
-        default: {},
-    },
     createdBy: {type: mongoose.Schema.Types.ObjectId, ref: "users", required: true},
 }, {timestamps: true});
 
@@ -102,19 +93,19 @@ function validateProject(project) {
     const schema = Joi.object({
         name: Joi.string().trim().required(),
         slug: Joi.string().trim(),
-        price: Joi.number().required(),
         description: Joi.string().required().min(10),
+        category: Joi.string().required(),
         brand: Joi.string().required(),
+        tags: Joi.array(),
+        originalPrice: Joi.number().required(),
+        discountPrice: Joi.number().required(),
         color: Joi.string().required(),
-        offer: Joi.number(),
         quantity: Joi.number(),
         stock: Joi.string().required(),
         images: Joi.array().min(1).required(),
         numOfReviews: Joi.number(),
         reviews: Joi.array(),
         totalRating: Joi.string(),
-        category: Joi.string().required(),
-        information: Joi.object(),
         createdBy: Joi.string(),
         shopId: Joi.string().required(),
         shop: Joi.object()

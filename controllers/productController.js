@@ -16,25 +16,25 @@ class ProductController {
         if (!categoryId)
             return res.status(400).send("Not found category");
 
-        const {name, price, description, brand, color, offer, quantity, stock, images, numOfReviews, reviews, totalRating, category, information} = req.body
+        const {name, originalPrice, discountPrice, description, brand, tags, color, quantity, stock, images, numOfReviews, reviews, totalRating, category} = req.body
 
         try {
             let product = new Product({
                 name: name,
                 slug: slugify(name),
-                price,
                 description,
+                category,
                 brand,
+                tags,
+                originalPrice,
+                discountPrice,
                 color,
-                offer,
                 quantity,
                 stock,
                 images,
                 numOfReviews,
                 reviews,
                 totalRating,
-                category,
-                information,
                 createdBy: req.user._id,
             });
             let savedProduct = await product.save();

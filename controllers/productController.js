@@ -1,6 +1,7 @@
 const {Product, validate} = require("../models/product");
 const slugify = require("slugify");
 const {Category} = require("../models/category");
+const {Shop} = require("../models/shop");
 const mongoose = require("mongoose");
 const Joi = require("joi");
 const {User} = require("../models/user");
@@ -16,7 +17,11 @@ class ProductController {
         if (!categoryId)
             return res.status(400).send("Not found category");
 
-        const {name, originalPrice, discountPrice, description, brand, tags, color, quantity, stock, images, numOfReviews, reviews, totalRating, category} = req.body
+        const shop = await Shop.findById(req.body.shopId)
+        if (!shop)
+            return res.status(400).send("Not found shop");
+
+        const {name, originalPrice, discountPrice, description, brand, tags, color, quantity, stock, images, category, shopId} = req.body
 
         try {
             let product = new Product({
@@ -32,10 +37,7 @@ class ProductController {
                 quantity,
                 stock,
                 images,
-                numOfReviews,
-                reviews,
-                totalRating,
-                createdBy: req.user._id,
+                shopId
             });
             let savedProduct = await product.save();
             res.status(201).send(savedProduct);
@@ -71,27 +73,28 @@ class ProductController {
         if (!categoryId)
             return res.status(400).send("Not found category");
 
-        const {name, price, description, brand, color, offer, quantity, stock, images, numOfReviews, reviews, totalRating, category, information} = req.body
+        const shop = await Shop.findById(req.body.shopId)
+        if (!shop)
+            return res.status(400).send("Not found shop");
+
+        const {name, originalPrice, discountPrice, description, brand, tags, color, quantity, stock, images, category, shopId} = req.body
 
         try {
             let product = await Product.findByIdAndUpdate(req.params.id,
                 {
                 name: name,
                 slug: slugify(name),
-                price,
                 description,
+                category,
                 brand,
+                tags,
+                originalPrice,
+                discountPrice,
                 color,
-                offer,
                 quantity,
                 stock,
                 images,
-                numOfReviews,
-                reviews,
-                totalRating,
-                category,
-                information,
-                createdBy: req.user._id,
+                shopId
             },{ new: true });
 
             if (!product)

@@ -22,9 +22,7 @@ const productSchema = new mongoose.Schema({
        type: String,
        required: true
     },
-    tags: {
-        type: String,
-    },
+    tags: [],
     originalPrice: {
         type: Number,
     },
@@ -43,7 +41,6 @@ const productSchema = new mongoose.Schema({
     },
     shop: {
         type: Object,
-        required: true,
     },
     sold: {
        type: Number,
@@ -84,7 +81,6 @@ const productSchema = new mongoose.Schema({
         default: 0,
     },
     category: {type: mongoose.Schema.Types.ObjectId, ref: "Categories", required: true},
-    createdBy: {type: mongoose.Schema.Types.ObjectId, ref: "users", required: true},
 }, {timestamps: true});
 
 const Product = mongoose.model("Products", productSchema);
@@ -99,16 +95,11 @@ function validateProject(project) {
         tags: Joi.array(),
         originalPrice: Joi.number().required(),
         discountPrice: Joi.number().required(),
-        color: Joi.string().required(),
+        color: Joi.array(),
         quantity: Joi.number(),
         stock: Joi.string().required(),
         images: Joi.array().min(1).required(),
-        numOfReviews: Joi.number(),
-        reviews: Joi.array(),
-        totalRating: Joi.string(),
-        createdBy: Joi.string(),
         shopId: Joi.string().required(),
-        shop: Joi.object()
     });
     return schema.validate(project);
 }

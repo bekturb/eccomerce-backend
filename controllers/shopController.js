@@ -8,8 +8,7 @@ const bcrypt = require("bcrypt");
 const sendEmail = require("../utils/sendEmail");
 const otpGenerator = require("otp-generator");
 const {Shop, validateShop} = require("../models/shop");
-const {validate, User} = require("../models/user");
-const {Otp} = require("../models/otp");
+const {User} = require("../models/user");
 
 class ShopController {
 
@@ -77,6 +76,180 @@ class ShopController {
         } else {
             res.status(400).send("Incorrect OTP or it has been expired.");
         }
+    }
+
+    async getAll(req, res) {
+        const shops = await Shop.find()
+            .sort("name")
+            .select({password: 0})
+        res.send(shops)
+    }
+
+    async getSingle(req,res) {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id))
+            return res.status(404).send("Invalid Id");
+
+        let shop = await Shop.findById(req.params.id)
+            .select({hash_password: 0});
+        if (!shop) return res.status(404).send({message: "No shop for the given Id"});
+
+        return res.status(200).send(shop)
+    }
+
+    async updateProfile(req, res) {
+        const updateProfileSchema = Joi.object({
+            name: Joi.string().trim().required(),
+            description: Joi.string().trim(),
+            avatar: Joi.string(),
+            address: Joi.string(),
+            phoneNumber: Joi.number(),
+            zipCode: Joi.number(),
+        });
+
+        const {error} = updateProfileSchema.validate(req.body);
+        if (error)
+            return res.status(400).send({message: error.details[0].message});
+
+        let shop = await Shop.findByIdAndUpdate(req.user._id, {
+            name: req.body.name,
+            description: req.body.description,
+            avatar: req.body.avatar,
+            address: req.body.address,
+            phoneNumber: req.body.phoneNumber,
+            zipCode: req.body.zipCode,
+        });
+
+        if (!shop)
+            return res.status(404).send("No shop for the given Id");
+
+        return res.status(200).send({message: "You successfully changed your profile"})
+    }
+
+    async changePassword(req,res){
+
+        const passwordSchema = Joi.object({
+            oldPassword: joiPassword
+                .string()
+                .min(8)
+                .minOfSpecialCharacters(1)
+                .minOfNumeric(1)
+                .noWhiteSpaces()
+                .onlyLatinCharacters()
+                .required(),
+            newPassword: joiPassword
+                .string()
+                .min(8)
+                .minOfSpecialCharacters(1)
+                .minOfNumeric(1)
+                .noWhiteSpaces()
+                .onlyLatinCharacters()
+                .required(),
+            confirmPassword: joiPassword
+                .string()
+                .min(8)
+                .minOfSpecialCharacters(1)
+                .minOfNumeric(1)
+                .noWhiteSpaces()
+                .onlyLatinCharacters()
+                .required()
+        });
+
+        const {error} = passwordSchema.validate(req.body);
+        if (error)
+            return res.status(400).send({message: error.details[0].message});
+
+        let shop = await Shop.findById(req.user._id).select("+password");
+
+        let comparePassword = await bcrypt.compare(req.body.oldPassword, shop.password);
+        if (!comparePassword)
+            return res.status(400).send('Password wasn\'t found');
+
+        if (req.body.newPassword !== req.body.confirmPassword){
+            return res.status(400).send('Password does not match');
+        }
+
+        const salt = await bcrypt.genSalt(Number(process.env.SALT));
+        const password = await bcrypt.hash(req.body.newPassword, salt);
+
+        shop = await Shop.findByIdAndUpdate(req.user._id, {
+            password: password
+        }, {new: true});
+
+        if (!shop)
+            return res.status(404).send({message: "No user for the given Id"});
+
+        res.status(200).send({message: "You successfully changed your password"})
+    }
+
+    async blockUser (req, res) {
+        const { id } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(id))
+            return res.status(404).send("Invalid Id");
+
+        const blockShop = await Shop.findByIdAndUpdate(id, {
+            isBlocked: true,
+        }, {
+            new: true,
+        });
+        res.status(200).send(blockShop)
+    }
+
+    async unBlockUser (req, res) {
+        const { id } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(id))
+            return res.status(404).send("Invalid Id");
+
+        const blockShop = await Shop.findByIdAndUpdate(id, {
+            isBlocked: false,
+        }, {
+            new: true,
+        });
+        res.status(200).send(blockShop)
+    }
+
+    async resetPassword(req, res) {
+
+        const passwordSchema = Joi.object({
+            email: Joi.string().email(),
+            newPassword: joiPassword
+                .string()
+                .min(8)
+                .minOfSpecialCharacters(1)
+                .minOfNumeric(1)
+                .noWhiteSpaces()
+                .onlyLatinCharacters()
+                .required(),
+            confirmPassword: joiPassword
+                .string()
+                .min(8)
+                .minOfSpecialCharacters(1)
+                .minOfNumeric(1)
+                .noWhiteSpaces()
+                .onlyLatinCharacters()
+                .required(),
+        });
+
+        const {error} = passwordSchema.validate(req.body);
+        if (error)
+            return res.status(400).send({message: error.details[0].message});
+
+        let shop = await Shop.findOne({email: req.body.email});
+
+        if (!shop) return res.status(400).send({message: "Not found user"});
+
+        if (req.body.newPassword !== req.body.confirmPassword){
+            return res.status(400).send('Password does not match');
+        }
+
+        const salt = await bcrypt.genSalt(Number(process.env.SALT));
+        shop.hash_password = await bcrypt.hash(req.body.newPassword, salt);
+
+        shop = await shop.save();
+
+        res.status(200).send("password reset successfully");
+
     }
 }
 

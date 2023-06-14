@@ -1,11 +1,8 @@
 const {User} = require("../models/user");
 const Joi = require("joi");
-const { joiPasswordExtendCore } = require('joi-password');
-const joiPassword = Joi.extend(joiPasswordExtendCore);
-const bcrypt = require("bcrypt")
 const sendEmail = require("../utils/sendEmail");
 const otpGenerator = require("otp-generator");
-const {Otp, validateVerify} = require("../models/otp");
+const {Otp} = require("../models/otp");
 const accountSid = process.env.API_KEY;
 const authToken =  process.env.AUTH_TOKEN;
 const client = require('twilio')(accountSid, authToken);

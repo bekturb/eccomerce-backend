@@ -251,6 +251,38 @@ class ShopController {
         res.status(200).send("password reset successfully");
 
     }
+
+    async updatePayment (req, res) {
+        const { withdrawMethod } = req.body;
+
+        const seller = await Shop.findByIdAndUpdate(req.seller._id, {
+            withdrawMethod,
+        });
+
+        res.status(201).send({
+            success: true,
+            seller,
+        });
+
+    }
+
+    async deletePaymentMethod (req, res) {
+        const seller = await Shop.findById(req.seller._id);
+
+        if (!seller) {
+            return res.status(404).send("Seller not found with this Id");
+
+        }
+
+        seller.withdrawMethod = null;
+
+        await seller.save();
+
+        res.status(201).send({
+            success: true,
+            seller,
+        });
+    }
 }
 
 module.exports = new ShopController();

@@ -53,6 +53,7 @@ const eventSchema = new mongoose.Schema({
     },
     shop:{
         type: Object,
+        required: true
     },
     sold: {
         type: Number,
@@ -92,7 +93,7 @@ function validateEvent(event) {
         color: Joi.array(),
         quantity: Joi.number().required(),
         shopId: Joi.string().required(),
-        shop: Joi.object(),
+        shop: Joi.object().required(),
         stock: Joi.string().required(),
         images: Joi.array(),
     });

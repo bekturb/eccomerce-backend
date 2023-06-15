@@ -41,6 +41,7 @@ const productSchema = new mongoose.Schema({
     },
     shop: {
         type: Object,
+        required: true
     },
     sold: {
        type: Number,
@@ -97,6 +98,7 @@ function validateProject(project) {
         quantity: Joi.number(),
         stock: Joi.string().required(),
         images: Joi.array().min(1).required(),
+        shop: Joi.object().required(),
         shopId: Joi.string().required(),
     });
     return schema.validate(project);

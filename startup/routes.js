@@ -13,6 +13,7 @@ const categoryRoute = require("../routes/categories");
 const couponRoute = require("../routes/coupons");
 const colorsRoute = require("../routes/colors");
 const cartRoute = require("../routes/carts");
+const orderRoute = require("../routes/orders");
 const passwordResetRoute = require("../routes/resetPassword");
 
 const imagesRoute = require("../routes/images");
@@ -27,6 +28,7 @@ module.exports = function (app) {
     app.use('/api/events', eventsRoute);
     app.use('/api/withdraws', withdrawsRoute);
     app.use('/api/users', usersRoute);
+    app.use('/api/orders', orderRoute);
     app.use('/api/shops', shopsRoute);
     app.use('/api/users/cart', cartRoute);
     app.use('/api/login', authRoute);

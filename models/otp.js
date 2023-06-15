@@ -29,5 +29,4 @@ function validateVerify(req) {
 }
 
 exports.validateVerify = validateVerify;
-
 exports.Otp = Otp;

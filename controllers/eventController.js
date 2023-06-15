@@ -39,6 +39,7 @@ class EventController {
                 quantity,
                 stock,
                 images,
+                shop: shop,
                 shopId
             });
             let savedEvent = await event.save();
@@ -99,6 +100,7 @@ class EventController {
                     quantity,
                     stock,
                     images,
+                    shop: shop,
                     shopId
                 },{ new: true });
 

@@ -37,6 +37,7 @@ class ProductController {
                 quantity,
                 stock,
                 images,
+                shop: shop,
                 shopId
             });
             let savedProduct = await product.save();
@@ -94,6 +95,7 @@ class ProductController {
                 quantity,
                 stock,
                 images,
+                shop: shop,
                 shopId
             },{ new: true });
 

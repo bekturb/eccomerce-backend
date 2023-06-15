@@ -102,7 +102,7 @@ class WithdrawController {
             const paymentEmailContent = `Hello ${seller.name}, Your withdrawal request of ${withdraw.amount}$ is on the way. Delivery time depends on your bank's rules, usually taking 3 to 7 days.`;
             await sendEmail(seller.email, 'Payment Confirmation', paymentEmailContent);
 
-            res.status(201).json({
+            res.status(201).send({
                 success: true,
                 withdraw,
             });

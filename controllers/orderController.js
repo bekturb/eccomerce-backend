@@ -138,6 +138,89 @@ class OrderController {
             return res.status(400).send(error.message);
         }
     }
+
+    async orderRefund (req, res) {
+
+        if (!mongoose.Types.ObjectId.isValid(req.params.id))
+            return res.status(404).send("Invalid Id");
+
+        try {
+            const order = await Order.findById(req.params.id);
+
+            if (!order) {
+                return res.status(404).send("Order not found with this id");
+            }
+
+            order.status = req.body.status;
+
+            await order.save({ validateBeforeSave: false });
+
+            res.status(200).send({
+                success: true,
+                order,
+                message: "Order Refund Request successfully!",
+            });
+        } catch (error) {
+            return res.status(500).send(error.message);
+        }
+    }
+
+    async orderRefundSuccess (req, res) {
+
+        if (!mongoose.Types.ObjectId.isValid(req.params.id))
+            return res.status(404).send("Invalid Id");
+
+        try {
+            const order = await Order.findById(req.params.id);
+
+            if (!order) {
+                return res.status(404).send("Order not found with this id");
+            }
+
+            order.status = req.body.status;
+
+            await order.save();
+
+            res.status(200).send({
+                success: true,
+                message: "Order Refund successfull!",
+            });
+
+            if (req.body.status === "Refund Success") {
+                await Promise.all(
+                    order.cart.map(async (o) => {
+                        await updateOrder(o.product, o.qty);
+                    })
+                );
+            }
+
+            async function updateOrder(id, qty) {
+                const product = await Product.findById(id);
+
+                product.quantity += qty;
+                product.sold -= qty;
+
+                await product.save({ validateBeforeSave: false });
+            }
+        } catch (error) {
+            return res.status(500).send(error.message);
+        }
+    }
+
+    async getAllAdminOrders (req, res) {
+        try {
+            const orders = await Order.find().sort({
+                deliveredAt: -1,
+                createdAt: -1,
+            });
+            res.status(201).send({
+                success: true,
+                orders,
+            });
+        } catch (error) {
+            return res.status(500).send(error.message);
+        }
+    }
 }
 
 module.exports = new OrderController();

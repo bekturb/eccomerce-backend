@@ -9,8 +9,8 @@ router.post("/", orderController.create);
 router.get("/get-all-orders/:userId", orderController.getAll);
 router.get("/get-seller-all-orders/:shopId", orderController.getSellerOrders);
 router.put("/update-order-status/:id", [auth, seller], orderController.updateStatus);
-// router.get("/get-product/:id", orderController.getOne);
-// router.put("/update/:id", [auth], orderController.update);
-// router.delete("/delete/:id", [auth], orderController.delete);
+router.put("/order-refund/:id", [auth], orderController.orderRefund);
+router.put("/order-refund-success/:id", [auth, seller], orderController.orderRefundSuccess);
+router.get("/admin-all-orders", [auth, admin], orderController.getAllAdminOrders);
 
 module.exports = router;

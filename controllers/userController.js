@@ -42,7 +42,7 @@ class UserController {
 
         let user = await User.findOne({email: req.body.email});
         if (user)
-            return res.status(400).send('This email is already exists');
+            return res.status(400).send({message: 'This email is already exists'});
 
         user = new User({
             firstName: req.body.firstName,

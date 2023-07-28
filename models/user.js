@@ -1,7 +1,7 @@
 require("dotenv").config()
 const mongoose = require("mongoose");
 const Joi = require("joi");
-const { joiPasswordExtendCore } = require('joi-password');
+const {joiPasswordExtendCore} = require('joi-password');
 const joiPassword = Joi.extend(joiPasswordExtendCore);
 const jwt = require("jsonwebtoken");
 
@@ -53,24 +53,24 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    addresses:[
+    addresses: [
         {
             country: {
                 type: String,
             },
-            city:{
+            city: {
                 type: String,
             },
-            address1:{
+            address1: {
                 type: String,
             },
-            address2:{
+            address2: {
                 type: String,
             },
-            zipCode:{
+            zipCode: {
                 type: Number,
             },
-            addressType:{
+            addressType: {
                 type: String,
             },
         }
@@ -78,8 +78,8 @@ const userSchema = new mongoose.Schema({
     wishList: [{type: mongoose.Schema.Types.ObjectId, ref: "Projects"}],
 }, {timestamps: true});
 
-userSchema.methods.generateAuthToken = function() {
-    const token = jwt.sign({ _id: this._id }, process.env.JWTPRIVATEKEY);
+userSchema.methods.generateAuthToken = function () {
+    const token = jwt.sign({_id: this._id}, process.env.JWTPRIVATEKEY);
     return token;
 };
 

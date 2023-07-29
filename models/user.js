@@ -100,7 +100,6 @@ function validateUser(user) {
             .required(),
         phoneNumber: Joi.number(),
         role: Joi.string().valid("user", "admin"),
-        profilePicture: Joi.string(),
     });
 
     return schema.validate(user);

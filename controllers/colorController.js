@@ -6,7 +6,7 @@ class ColorController {
     async create(req, res) {
 
         const {error} = validateColor(req.body);
-        if (error) return res.status(400).send(error.details[0].message);
+        if (error) return res.status(400).send({message});
 
         const {title} = req.body
 

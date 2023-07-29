@@ -7,7 +7,7 @@ class CategoryController {
     async create(req, res) {
 
         const {error} = validate(req.body);
-        if (error) return res.status(400).send(error.details[0].message)
+        if (error) return res.status(400).send({message: error.details[0].message})
 
         const categoryObj = {
             name: req.body.name,

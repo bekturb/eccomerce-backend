@@ -3,13 +3,17 @@ const multer = require("multer");
 const sharp = require("sharp");
 const path = require("path");
 
+
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, "../public/images/"));
+    destination: function (req, file, callback) {
+        const uploadDir = path.join(__dirname, "../public/images");
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        callback(null, uploadDir);
     },
-    filename: function (req, file, cb) {
-        const uniquesuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-        cb(null, file.fieldname + "-" + uniquesuffix + ".jpeg");
+    filename: function (req, file, callback) {
+        callback(null, Date.now() + "-" + file.originalname);
     },
 });
 

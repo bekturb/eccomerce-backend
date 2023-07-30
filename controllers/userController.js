@@ -1,7 +1,7 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 const Joi = require("joi");
-const { joiPasswordExtendCore } = require('joi-password');
+const {joiPasswordExtendCore} = require('joi-password');
 const joiPassword = Joi.extend(joiPasswordExtendCore);
 const {User, validate} = require("../models/user");
 const {Otp, validateVerify} = require("../models/otp");
@@ -9,7 +9,7 @@ const bcrypt = require("bcrypt");
 const sendEmail = require("../utils/sendEmail");
 const otpGenerator = require("otp-generator");
 const accountSid = process.env.API_KEY;
-const authToken =  process.env.AUTH_TOKEN;
+const authToken = process.env.AUTH_TOKEN;
 const client = require('twilio')(accountSid, authToken);
 
 class UserController {
@@ -30,7 +30,7 @@ class UserController {
         function validateNumber(email) {
             const phonePattern = /^\+(?:[0-9] ?){6,14}[0-9]$/;
 
-            if (phonePattern.test(email)  && !isNaN(email)) {
+            if (phonePattern.test(email) && !isNaN(email)) {
                 return true;
             }
             return false;
@@ -61,17 +61,17 @@ class UserController {
         });
 
         if (validateEmail(req.body.email)) {
-           await sendEmail(user.email, "Verify your email", `Your OTP is ${OTP}.\nDo not share with anyone`);
+            await sendEmail(user.email, "Verify your email", `Your OTP is ${OTP}.\nDo not share with anyone`);
             await Otp.create({otp: OTP, userId: user._id});
         } else if (validateNumber(req.body.email)) {
             client.messages
                 .create({
                     body: `Your OTP is ${OTP}.\nDo not share with anyone`,
-                    from:  process.env.TWILLIO_PHONE_NUMBER,
+                    from: process.env.TWILLIO_PHONE_NUMBER,
                     to: req.body.email
                 }).then(() => {
                 Otp.create({otp: OTP, userId: user._id});
-                })
+            })
         } else {
             return res.status(400).send("Invalid phone/email.");
         }
@@ -97,9 +97,11 @@ class UserController {
 
         const user = await User.findById(OTP.userId);
         if (user) {
-            await User.findByIdAndUpdate(OTP.userId, { verified: true });
-            await Otp.deleteOne({ _id: OTP._id });
-            res.status(200).send(`${user.email} has been successfully verified`);
+            await User.findByIdAndUpdate(OTP.userId, {verified: true});
+            await Otp.deleteOne({_id: OTP._id});
+
+            const token = user.generateAuthToken();
+            res.header("x-auth-token", token).send({message: "You successfully authorized!", token});
         } else {
             res.status(400).send("Incorrect OTP or it has been expired.");
         }
@@ -112,7 +114,7 @@ class UserController {
         res.send(users)
     }
 
-    async getSingle(req,res) {
+    async getSingle(req, res) {
         if (!mongoose.Types.ObjectId.isValid(req.params.id))
             return res.status(404).send("Invalid Id");
 
@@ -148,7 +150,7 @@ class UserController {
         return res.status(200).send({message: "You successfully changed your profile"})
     }
 
-    async changePassword(req,res){
+    async changePassword(req, res) {
 
         const passwordSchema = Joi.object({
             oldPassword: joiPassword
@@ -187,7 +189,7 @@ class UserController {
         if (!comparePassword)
             return res.status(400).send('Password wasn\'t found');
 
-        if (req.body.newPassword !== req.body.confirmPassword){
+        if (req.body.newPassword !== req.body.confirmPassword) {
             return res.status(400).send('Password does not match');
         }
 
@@ -253,7 +255,7 @@ class UserController {
 
         if (!user) return res.status(400).send({message: "Not found user"});
 
-        if (req.body.newPassword !== req.body.confirmPassword){
+        if (req.body.newPassword !== req.body.confirmPassword) {
             return res.status(400).send('Password does not match');
         }
 
@@ -266,8 +268,8 @@ class UserController {
 
     }
 
-    async blockUser (req, res) {
-        const { id } = req.params;
+    async blockUser(req, res) {
+        const {id} = req.params;
 
         if (!mongoose.Types.ObjectId.isValid(id))
             return res.status(404).send("Invalid Id");
@@ -280,8 +282,8 @@ class UserController {
         res.status(200).send(blockUser)
     }
 
-    async unBlockUser (req, res) {
-        const { id } = req.params;
+    async unBlockUser(req, res) {
+        const {id} = req.params;
 
         if (!mongoose.Types.ObjectId.isValid(id))
             return res.status(404).send("Invalid Id");
@@ -294,7 +296,7 @@ class UserController {
         res.status(200).send(blockUser)
     }
 
-    async updateAddresses (req,res) {
+    async updateAddresses(req, res) {
         const user = await User.findById(req.user._id);
 
         const sameTypeAddress = user.addresses.find(
@@ -302,7 +304,7 @@ class UserController {
         );
 
         if (sameTypeAddress) {
-           return res.status(400).send(`${req.body.addressType} address already exists`)
+            return res.status(400).send(`${req.body.addressType} address already exists`)
         }
 
         const existsAddress = user.addresses.find(
@@ -323,7 +325,7 @@ class UserController {
         });
     }
 
-    async deleteUserAddress (req, res) {
+    async deleteUserAddress(req, res) {
         const userId = req.user._id;
         const addressId = req.params.id;
 
@@ -331,12 +333,12 @@ class UserController {
             {
                 _id: userId,
             },
-            { $pull: { addresses: { _id: addressId } } }
+            {$pull: {addresses: {_id: addressId}}}
         );
 
         const user = await User.findById(userId);
 
-        res.status(200).json({ success: true, user });
+        res.status(200).json({success: true, user});
     }
 }
 

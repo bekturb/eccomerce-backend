@@ -92,7 +92,7 @@ class UserController {
         const isMatch = await bcrypt.compare(req.body.otp, OTP.otp);
 
         if (!isMatch) {
-            return res.send("Incorrect OTP or it has been expired.");
+            return res.status(400).send("Incorrect OTP or it has been expired.");
         }
 
         const user = await User.findById(OTP.userId);

@@ -8,14 +8,21 @@ const categorySchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
+
     slug: {
         type: String,
         required: true,
         unique: true
     },
+
     icon: {
         type: String,
     },
+
+    categoryImage: {
+        type: String,
+    },
+
     parentId: {
         type: String,
     }
@@ -30,6 +37,7 @@ function validateCategory(category) {
         name: Joi.string().required().trim(),
         slug: Joi.string().trim(),
         icon: Joi.string(),
+        categoryImage: Joi.string(),
         parentId: Joi.string()
     });
     return schema.validate(category)

@@ -12,7 +12,8 @@ class CategoryController {
         const categoryObj = {
             name: req.body.name,
             slug: slugify(req.body.name),
-            icon: req.body.icon
+            icon: req.body.icon,
+            categoryImage: req.body.categoryImage
         }
 
         if (req.body.parentId) {

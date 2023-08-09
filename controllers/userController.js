@@ -89,6 +89,8 @@ class UserController {
         if (!OTP)
             return res.status(400).send('Invalid OTP number');
 
+        console.log(OTP)
+
         const isMatch = await bcrypt.compare(req.body.otp, OTP.otp);
 
         if (!isMatch) {

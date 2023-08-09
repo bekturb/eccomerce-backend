@@ -62,7 +62,7 @@ class AuthController {
             } else {
                 return res.status(400).send("Invalid phone/email.");
             }
-            return res.status(201).send({message: "OTP sent. Valid for only 2 minutes", token: false});
+            return res.status(201).send({message: "OTP sent. Valid for only 2 minutes", token: false, user});
         }
 
         const token = user.generateAuthToken();

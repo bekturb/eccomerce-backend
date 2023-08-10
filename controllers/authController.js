@@ -43,9 +43,16 @@ class AuthController {
 
         if (!user.verified) {
 
-            const OTP = otpGenerator.generate(6, {
+            let OTP = await Otp.findOne({ userId: user._id });
+
+            if (OTP){
+                await Otp.deleteOne({_id: OTP._id});
+            }
+
+             OTP = otpGenerator.generate(6, {
                 digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false
             });
+
 
             if (validateEmail(req.body.email)) {
                 await sendEmail(user.email, "Verify your email", `Your OTP is ${OTP}.\nDo not share with anyone`);

@@ -13,6 +13,8 @@ const createCategories = (categories, parentId) => {
             _id: cate._id,
             name: cate.name,
             slug: cate.slug,
+            icon: cate.icon,
+            categoryImage: cate.categoryImage,
             children: createCategories(categories, cate._id)
         })
     }

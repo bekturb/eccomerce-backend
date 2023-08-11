@@ -1,6 +1,7 @@
 const {Category, validate} = require("../models/category");
 const slugify = require("slugify");
 const {createCategories} = require("../utils/createCategories");
+const mongoose = require("mongoose");
 
 class CategoryController {
 
@@ -36,6 +37,32 @@ class CategoryController {
             const categoryList = createCategories(categories);
             res.status(200).send(categoryList)
         }
+    }
+
+    async update(req, res) {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id))
+            return res.status(404).send("Invalid Id");
+
+        const {error} = validate(req.body);
+        if (error) return res.status(400).send(error.details[0].message);
+
+        const categoryObj = {
+            name: req.body.name,
+            slug: slugify(req.body.name),
+            icon: req.body.icon,
+            categoryImage: req.body.categoryImage
+        }
+
+        if (req.body.parentId) {
+            categoryObj.parentId = req.body.parentId
+        }
+
+        let category = await Category.findByIdAndUpdate(req.params.id, categoryObj, {
+            new: true
+        })
+        if (!category)
+            return res.status(404).send("No category for the given Id");
+        res.send(category)
     }
 }
 

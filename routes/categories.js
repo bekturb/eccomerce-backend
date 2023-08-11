@@ -6,5 +6,6 @@ const admin = require("../middlewares/admin");
 
 router.post("/", [auth, admin], CategoryController.create);
 router.get("/", CategoryController.getCategories);
+router.put("/:id", CategoryController.update);
 
 module.exports = router;

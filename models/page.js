@@ -51,8 +51,7 @@ function validatePage(page) {
         suggestion: Joi.string().required(),
         banners: Joi.array().min(1).required(),
         products: Joi.array(),
-        category: Joi.string().required(),
-        createdBy: Joi.string().required(),
+        category: Joi.string().required()
     });
     return schema.validate(page);
 }

@@ -1,11 +1,9 @@
 const {Page, validate} = require("../models/page");
 const {Category} = require("../models/category");
-const mongoose = require("mongoose");
-const {User} = require("../models/user");
 
 class ProductController {
 
-    async create(req,res) {
+    async create(req, res) {
 
         try {
 
@@ -16,36 +14,52 @@ class ProductController {
             if (!categoryId)
                 return res.status(400).send("Not found category");
 
-            const { banners, products } = req.body;
+            const {banners, products} = req.body;
 
             if (banners && banners.length > 0) {
                 req.body.banners = banners.map((banner, index) => ({
                     img: banner.img,
-                    navigateTo: `/bannerClicked?categoryId=${req.body.category}&type=${req.body.type}`,
+                    navigateTo: `/bannerClicked?categoryId=${req.body.category}`,
                 }));
             }
 
             if (products && products.length > 0) {
                 req.body.products = products.map((product, index) => ({
                     img: product.img,
-                    navigateTo: `/productClicked?categoryId=${req.body.category}&type=${req.body.type}`,
+                    navigateTo: `/productClicked?categoryId=${req.body.category}`,
                 }));
             }
 
             req.body.createdBy = req.user._id;
 
-            let page = await Page.findOne({ category: req.body.category });
+            let page = await Page.findOne({category: req.body.category});
 
             if (page) {
-                page = await Page.findOneAndUpdate({ category: req.body.category }, req.body, { new: true });
-                return res.status(201).send({ page });
+                page = await Page.findOneAndUpdate({category: req.body.category}, req.body, {new: true});
+                return res.status(201).send({page});
             } else {
                 page = new Page(req.body);
                 page = await page.save();
-                return res.status(201).send({ page });
+                return res.status(201).send({page});
             }
         } catch (error) {
-            return res.status(400).send({ error: error.message });
+            return res.status(400).send({error: error.message});
+        }
+    }
+
+    async getPage(req, res) {
+        try {
+            const {category} = req.params;
+            const page = await Page.findOne({category: category});
+
+            if (page) {
+                return res.status(200).send({page});
+            } else {
+                return res.status(404).send("Page not found");
+            }
+
+        } catch (error) {
+            return res.status(400).send({error: error.message});
         }
     }
 }

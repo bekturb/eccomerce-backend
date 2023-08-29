@@ -49,8 +49,7 @@ class ProductController {
 
     async getPage(req, res) {
         try {
-            const {category} = req.params;
-            const page = await Page.findOne({category: category});
+            const page = await Page.find();
 
             if (page) {
                 return res.status(200).send({page});

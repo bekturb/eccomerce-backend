@@ -3,8 +3,6 @@ const slugify = require("slugify");
 const {Category} = require("../models/category");
 const {Shop} = require("../models/shop");
 const mongoose = require("mongoose");
-const Joi = require("joi");
-const {User} = require("../models/user");
 
 class EventController {
     async create(req,res) {

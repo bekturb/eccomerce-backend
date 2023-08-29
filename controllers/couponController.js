@@ -41,7 +41,6 @@ class CouponController {
 
         res.send(coupon)
     }
-
     async delete(req, res) {
         if (!mongoose.Types.ObjectId.isValid(req.params.id))
             return res.status(404).send("Invalid Id");

@@ -52,7 +52,7 @@ class ProductController {
             const page = await Page.find();
 
             if (page) {
-                return res.status(200).send({page});
+                return res.status(200).send(page);
             } else {
                 return res.status(404).send("Page not found");
             }

@@ -14,22 +14,6 @@ class ProductController {
             if (!categoryId)
                 return res.status(400).send("Not found category");
 
-            const {banners, products} = req.body;
-
-            if (banners && banners.length > 0) {
-                req.body.banners = banners.map((banner, index) => ({
-                    img: banner.img,
-                    navigateTo: `/bannerClicked?categoryId=${req.body.category}`,
-                }));
-            }
-
-            if (products && products.length > 0) {
-                req.body.products = products.map((product, index) => ({
-                    img: product.img,
-                    navigateTo: `/productClicked?categoryId=${req.body.category}`,
-                }));
-            }
-
             req.body.createdBy = req.user._id;
 
             let page = await Page.findOne({category: req.body.category});

@@ -16,22 +16,19 @@ const pageSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
-    banners: [
-        {
-            img: { type: String },
-            navigateTo: { type: String },
-        }
-    ],
-    products: [
-        {
-            img: { type: String },
-            navigateTo: { type: String }
-        }
-    ],
+    banner: {
+        type: String,
+        required: true,
+    },
+
+    navigateTo: {
+        type: String,
+    },
+
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Categories',
-        required: true ,
+        required: true,
         unique: true
     },
     createdBy: {
@@ -39,7 +36,7 @@ const pageSchema = new mongoose.Schema({
         ref: 'users',
         required: true
     }
-}, { timestamps: true });
+}, {timestamps: true});
 
 
 const Page = mongoose.model('Page', pageSchema);
@@ -49,9 +46,9 @@ function validatePage(page) {
         title: Joi.string().trim().required(),
         description: Joi.string().trim().required(),
         suggestion: Joi.string().required(),
-        banners: Joi.array().min(1).required(),
-        products: Joi.array(),
-        category: Joi.string().required()
+        banner: Joi.string().required(),
+        navigateTo: Joi.string(),
+        category: Joi.string().required(),
     });
     return schema.validate(page);
 }

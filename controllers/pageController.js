@@ -24,7 +24,7 @@ class ProductController {
             } else {
                 page = new Page(req.body);
                 page = await page.save();
-                return res.status(201).send({page});
+                return res.status(201).send(page);
             }
         } catch (error) {
             return res.status(400).send({error: error.message});

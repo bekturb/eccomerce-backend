@@ -10,10 +10,11 @@ class ProductController {
             const {error} = validate(req.body);
             if (error) return res.status(400).send(error.details[0].message);
 
-            const categoryId = await Category.findById(req.body.category)
-            if (!categoryId)
+            const category = await Category.findById(req.body.category)
+            if (!category)
                 return res.status(400).send("Not found category");
 
+            req.body.navigateTo = `/bannerClicked?categoryId=${req.body.category}`;
             req.body.createdBy = req.user._id;
 
             let page = await Page.findOne({category: req.body.category});

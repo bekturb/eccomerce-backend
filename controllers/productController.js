@@ -5,6 +5,7 @@ const {Shop} = require("../models/shop");
 const mongoose = require("mongoose");
 const Joi = require("joi");
 const {User} = require("../models/user");
+const {Brand} = require("../models/brand");
 
 class ProductController {
 
@@ -16,6 +17,10 @@ class ProductController {
         const categoryId = await Category.findById(req.body.category)
         if (!categoryId)
             return res.status(400).send("Not found category");
+
+        const brandId = await Brand.findById(req.body.brand)
+        if (!brandId)
+            return res.status(400).send("Not found brand");
 
         const shop = await Shop.findById(req.body.shopId)
         if (!shop)
@@ -70,6 +75,9 @@ class ProductController {
         const categoryId = await Category.findById(req.body.category)
         if (!categoryId)
             return res.status(400).send("Not found category");
+
+        if (!brandId)
+            return res.status(400).send("Not found brand");
 
         const shop = await Shop.findById(req.body.shopId)
         if (!shop)

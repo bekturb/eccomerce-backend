@@ -113,7 +113,7 @@ function validateProject(project) {
                 ),
             })
         ),
-        totalQuantity: Joi.number().required(),
+        totalQuantity: Joi.number(),
         shopId: Joi.string().required(),
         shop: Joi.object().required(),
         sold: Joi.number().required().default(0),

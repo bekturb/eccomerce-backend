@@ -10,6 +10,7 @@ const shopsRoute = require("../routes/shops");
 const authRoute = require("../routes/auth");
 const shopAuthRoute = require("../routes/shopAuth");
 const categoryRoute = require("../routes/categories");
+const brandRoute = require("../routes/brands");
 const couponRoute = require("../routes/coupons");
 const cartRoute = require("../routes/carts");
 const orderRoute = require("../routes/orders");
@@ -34,6 +35,7 @@ module.exports = function (app) {
     app.use('/api/login', authRoute);
     app.use('/api/shop-login', shopAuthRoute);
     app.use('/api/categories', categoryRoute);
+    app.use('/api/brands', brandRoute);
     app.use('/api/coupon', couponRoute);
     app.use('/api/pages', pageRoute);
     app.use('/api/password-reset', passwordResetRoute);

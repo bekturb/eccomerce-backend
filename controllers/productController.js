@@ -26,21 +26,24 @@ class ProductController {
         if (!shop)
             return res.status(400).send("Not found shop");
 
-                const {name, description, brand, category, tags, variants, shopId, totalQuantity, stock,} = req.body
+        const {name, description, brand, category, tags, variants, shopId, stock, anotherNewField,} = req.body
+        const totalQuantity = variants.reduce((sum, variant) => sum + variant.quantity, 0);
+
 
         try {
             let product = new Product({
                 name: name,
-                    slug: slugify(name),
-                    description,
-                    category,
-                    brand,
-                    tags,
-                    totalQuantity,
-                    stock,
-                    variants,
-                    shop: shop,
-                    shopId
+                slug: slugify(name),
+                description,
+                category,
+                brand,
+                tags,
+                totalQuantity,
+                stock,
+                variants,
+                shop: shop,
+                shopId,
+                anotherNewField,
             });
             let savedProduct = await product.save();
             res.status(201).send(savedProduct);
@@ -83,7 +86,20 @@ class ProductController {
         if (!shop)
             return res.status(400).send("Not found shop");
 
-        const {name, description, brand, category, tags, variants, shopId, totalQuantity, stock,} = req.body
+        const {
+            name,
+            description,
+            brand,
+            category,
+            tags,
+            variants,
+            shopId,
+            stock,
+            anotherNewField,
+        } = req.body
+
+        const totalQuantity = variants.reduce((sum, variant) => sum + variant.quantity, 0);
+
 
         try {
             let product = await Product.findByIdAndUpdate(req.params.id,
@@ -98,7 +114,8 @@ class ProductController {
                     stock,
                     variants,
                     shop: shop,
-                    shopId
+                    shopId,
+                    anotherNewField,
                 }, {new: true});
 
             if (!product)

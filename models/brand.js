@@ -36,7 +36,7 @@ function validateBrand(brand) {
         name: Joi.string().required().trim(),
         slug: Joi.string().trim(),
         brandImage: Joi.string(),
-        categories: Joi.array()
+        categoryIds: Joi.array()
     });
     return schema.validate(brand)
 

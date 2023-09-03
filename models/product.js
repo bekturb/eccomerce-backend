@@ -115,7 +115,7 @@ function validateProject(project) {
         ),
         totalQuantity: Joi.number(),
         shopId: Joi.string().required(),
-        shop: Joi.object().required(),
+        shop: Joi.object(),
         sold: Joi.number().required().default(0),
         stock: Joi.string(),
         numOfReviews: Joi.number().default(0),

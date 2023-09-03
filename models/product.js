@@ -7,33 +7,46 @@ const productSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
-    slug: {
-        type: String,
-        required: true,
-        trim: true,
-    },
     description: {
         type: String,
         required: true,
         trim: true,
     },
     brand: {
-       type: String,
-       required: true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Brands",
+        required: true,
     },
-    category: {type: mongoose.Schema.Types.ObjectId, ref: "Categories", required: true},
-    tags: [],
-    originalPrice: {
-        type: Number,
+    category: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Categories",
+        required: true,
     },
-    discountPrice: {
+    tags: [String],
+    variants: [
+        {
+            color: String,
+            originalPrice: Number,
+            discountPrice: {
+                type: Number,
+                required: true,
+            },
+            quantity: {
+                type: Number,
+                required: true,
+            },
+            size: Number,
+            images: [
+                {
+                    url: String,
+                    public_id: String,
+                },
+            ],
+        }
+    ],
+    totalQuantity: {
         type: Number,
-        required: [true, "Please enter your product price!"],
-    },
-    color: [],
-    quantity: {
-        type: Number,
-        required: true
+        required: true,
     },
     shopId: {
         type: String,
@@ -41,24 +54,14 @@ const productSchema = new mongoose.Schema({
     },
     shop: {
         type: Object,
-        required: true
+        required: true,
     },
     sold: {
-       type: Number,
-       required: true,
-       default: 0,
+        type: Number,
+        required: true,
+        default: 0,
     },
-    stock: {
-        type: String,
-        required: true
-    },
-    images: [
-        {
-            url: String,
-            public_id: String,
-        },
-    ],
-
+    stock: String,
     numOfReviews: {
         type: Number,
         default: 0
@@ -73,32 +76,58 @@ const productSchema = new mongoose.Schema({
                 type: String,
                 required: true
             },
-            postedBy: {type: mongoose.Schema.Types.ObjectId, ref: "users", required: true},
+            postedBy: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "users",
+                required: true,
+            },
         }
     ],
     totalRating: {
         type: Number,
         default: 0,
     },
-}, {timestamps: true});
+    anotherNewField: mongoose.Schema.Types.Mixed,
+}, { timestamps: true });
 
 const Product = mongoose.model("Products", productSchema);
 
 function validateProject(project) {
     const schema = Joi.object({
-        name: Joi.string().trim().required(),
-        slug: Joi.string().trim(),
-        description: Joi.string().required().min(10),
-        category: Joi.string().required(),
+        name: Joi.string().required().trim(),
+        description: Joi.string().required().trim(),
         brand: Joi.string().required(),
-        tags: Joi.array(),
-        originalPrice: Joi.number().required(),
-        discountPrice: Joi.number().required(),
-        color: Joi.array(),
-        quantity: Joi.number(),
-        stock: Joi.string().required(),
-        images: Joi.array().min(1).required(),
+        category: Joi.string().required(),
+        tags: Joi.array().items(Joi.string()),
+        variants: Joi.array().items(
+            Joi.object({
+                color: Joi.string(),
+                originalPrice: Joi.number(),
+                discountPrice: Joi.number().required(),
+                quantity: Joi.number().required(),
+                images: Joi.array().items(
+                    Joi.object({
+                        url: Joi.string(),
+                        public_id: Joi.string(),
+                    })
+                ),
+            })
+        ),
+        totalQuantity: Joi.number().required(),
         shopId: Joi.string().required(),
+        shop: Joi.object().required(),
+        sold: Joi.number().required().default(0),
+        stock: Joi.string(),
+        numOfReviews: Joi.number().default(0),
+        reviews: Joi.array().items(
+            Joi.object({
+                star: Joi.number().required(),
+                comment: Joi.string().required(),
+                postedBy: Joi.string().required(),
+            })
+        ),
+        totalRating: Joi.number().default(0),
+        anotherNewField: Joi.any(),
     });
     return schema.validate(project);
 }

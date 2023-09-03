@@ -8,7 +8,7 @@ const {User} = require("../models/user");
 
 class ProductController {
 
-    async create(req,res) {
+    async create(req, res) {
 
         const {error} = validate(req.body);
         if (error) return res.status(400).send(error.details[0].message);
@@ -21,24 +21,21 @@ class ProductController {
         if (!shop)
             return res.status(400).send("Not found shop");
 
-        const {name, originalPrice, discountPrice, description, brand, tags, color, quantity, stock, images, category, shopId} = req.body
+                const {name, description, brand, category, tags, variants, shopId, totalQuantity, stock,} = req.body
 
         try {
             let product = new Product({
                 name: name,
-                slug: slugify(name),
-                description,
-                category,
-                brand,
-                tags,
-                originalPrice,
-                discountPrice,
-                color,
-                quantity,
-                stock,
-                images,
-                shop: shop,
-                shopId
+                    slug: slugify(name),
+                    description,
+                    category,
+                    brand,
+                    tags,
+                    totalQuantity,
+                    stock,
+                    variants,
+                    shop: shop,
+                    shopId
             });
             let savedProduct = await product.save();
             res.status(201).send(savedProduct);
@@ -62,7 +59,7 @@ class ProductController {
         res.send(product)
     }
 
-    async update(req,res) {
+    async update(req, res) {
 
         if (!mongoose.Types.ObjectId.isValid(req.params.id))
             return res.status(404).send("Invalid Id");
@@ -78,26 +75,23 @@ class ProductController {
         if (!shop)
             return res.status(400).send("Not found shop");
 
-        const {name, originalPrice, discountPrice, description, brand, tags, color, quantity, stock, images, category, shopId} = req.body
+        const {name, description, brand, category, tags, variants, shopId, totalQuantity, stock,} = req.body
 
         try {
             let product = await Product.findByIdAndUpdate(req.params.id,
                 {
-                name: name,
-                slug: slugify(name),
-                description,
-                category,
-                brand,
-                tags,
-                originalPrice,
-                discountPrice,
-                color,
-                quantity,
-                stock,
-                images,
-                shop: shop,
-                shopId
-            },{ new: true });
+                    name: name,
+                    slug: slugify(name),
+                    description,
+                    category,
+                    brand,
+                    tags,
+                    totalQuantity,
+                    stock,
+                    variants,
+                    shop: shop,
+                    shopId
+                }, {new: true});
 
             if (!product)
                 return res.status(404).send("No project for the given Id");
@@ -121,7 +115,7 @@ class ProductController {
         res.send(product)
     }
 
-    async createProductReview (req, res) {
+    async createProductReview(req, res) {
         const validateReview = Joi.object({
             star: Joi.number().required(),
             comment: Joi.string().required(),
@@ -166,7 +160,7 @@ class ProductController {
 
         product.totalRating = avg / product.reviews.length;
 
-        await product.save({ validateBeforeSave: false });
+        await product.save({validateBeforeSave: false});
 
         res.status(200).send({
             success: true,
@@ -184,7 +178,7 @@ class ProductController {
         res.send(productReviews)
     }
 
-    async deleteReview (req, res) {
+    async deleteReview(req, res) {
         const projectId = req.params.productId;
         const reviewId = req.params.reviewId;
 
@@ -253,7 +247,7 @@ class ProductController {
                     new: true,
                 });
             res.status(201).send(user)
-        }else{
+        } else {
             let user = await User.findByIdAndUpdate(_id, {
                     $push: {wishList: prodId},
                 },

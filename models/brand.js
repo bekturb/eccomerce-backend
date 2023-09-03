@@ -19,11 +19,12 @@ const brandSchema = new mongoose.Schema({
         type: String,
     },
 
-    parentCategory: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Categories",
-        required: true
-    },
+    categories: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Categories',
+        },
+    ],
 
 }, {timestamps: true});
 
@@ -35,7 +36,7 @@ function validateBrand(brand) {
         name: Joi.string().required().trim(),
         slug: Joi.string().trim(),
         brandImage: Joi.string(),
-        parentCategory: Joi.string()
+        categories: Joi.array()
     });
     return schema.validate(brand)
 

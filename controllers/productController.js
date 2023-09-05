@@ -29,7 +29,6 @@ class ProductController {
         const {name, description, brand, category, tags, variants, shopId, stock, anotherNewField,} = req.body
         const totalQuantity = variants.reduce((sum, variant) => sum + variant.quantity, 0);
 
-
         try {
             let product = new Product({
                 name: name,
@@ -99,7 +98,6 @@ class ProductController {
         } = req.body
 
         const totalQuantity = variants.reduce((sum, variant) => sum + variant.quantity, 0);
-
 
         try {
             let product = await Product.findByIdAndUpdate(req.params.id,

@@ -2,100 +2,152 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 
 const eventSchema = new mongoose.Schema({
-    name:{
-        type: String,
-        required:[true,"Please enter your event product name!"],
-        trim: true
-    },
-    slug: {
+    name: {
         type: String,
         required: true,
         trim: true,
     },
-    description:{
+    description: {
         type: String,
-        required:[true,"Please enter your event product description!"],
+        required: true,
         trim: true,
     },
     brand: {
-        type: String,
-        required: true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "brands",
+        required: true,
     },
-    category: {type: mongoose.Schema.Types.ObjectId, ref: "Categories", required: true},
-    tags: [],
-    start_Date: {
+    category: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Categories",
+        required: true,
+    },
+    tags: [String],
+    salePercentage: {
+        type: Number,
+        required: true,
+    },
+    startDate: {
         type: Date,
         required: true,
     },
-    finish_Date: {
+    endDate: {
         type: Date,
         required: true,
     },
-    status: {
-        type: String,
-        default: "Running",
-    },
-    originalPrice:{
+    variants: [
+        {
+            color: String,
+            originalPrice: Number,
+            discountPrice: {
+                type: Number,
+                required: true,
+            },
+            quantity: {
+                type: Number,
+                required: true,
+            },
+            sold: {
+                type: Number,
+                required: true,
+                default: 0,
+            },
+            size: Number,
+            images: [
+                {
+                    url: String,
+                    public_id: String,
+                },
+            ],
+        }
+    ],
+    totalQuantity: {
         type: Number,
+        required: true,
     },
-    discountPrice:{
-        type: Number,
-        required: [true,"Please enter your event product price!"],
-    },
-    color: [],
-    quantity: {
-        type: Number,
-        required: true
-    },
-    shopId:{
+    shopId: {
         type: String,
         required: true,
     },
-    shop:{
+    shop: {
         type: Object,
-        required: true
+        required: true,
     },
-    sold: {
+    totalSold: {
         type: Number,
         required: true,
         default: 0,
     },
-    stock: {
-        type: String,
-        required: true
+    stock: String,
+    numOfReviews: {
+        type: Number,
+        default: 0
     },
-    images:[
+    reviews: [
         {
-            url: String,
-            public_id: String,
-        },
+            star: {
+                type: Number,
+                required: true
+            },
+            comment: {
+                type: String,
+                required: true
+            },
+            postedBy: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "users",
+                required: true,
+            },
+        }
     ],
-    createdAt:{
-        type: Date,
-        default: Date.now(),
-    }
-});
+    totalRating: {
+        type: Number,
+        default: 0,
+    },
+    anotherNewField: mongoose.Schema.Types.Mixed,
+}, { timestamps: true });
 
 const Event = mongoose.model("Events", eventSchema);
 
 function validateEvent(event) {
     const schema = Joi.object({
         name: Joi.string().required().trim(),
-        description: Joi.string().required().min(10),
+        description: Joi.string().required().trim(),
         brand: Joi.string().required(),
         category: Joi.string().required(),
-        tags: Joi.array(),
-        start_Date: Joi.date().required(),
-        finish_Date: Joi.date().required(),
-        status: Joi.string(),
-        originalPrice: Joi.number(),
-        discountPrice: Joi.number().required(),
-        color: Joi.array(),
-        quantity: Joi.number().required(),
+        tags: Joi.array().items(Joi.string()),
+        salePercentage: Joi.number().required(),
+        startDate: Joi.date().required(),
+        endDate: Joi.date().required(),
+        variants: Joi.array().items(
+            Joi.object({
+                color: Joi.string(),
+                originalPrice: Joi.number(),
+                discountPrice: Joi.number().required(),
+                quantity: Joi.number().required(),
+                images: Joi.array().items(
+                    Joi.object({
+                        url: Joi.string(),
+                        public_id: Joi.string(),
+                    })
+                ),
+            })
+        ),
+        totalQuantity: Joi.number(),
         shopId: Joi.string().required(),
-        shop: Joi.object().required(),
-        stock: Joi.string().required(),
-        images: Joi.array(),
+        shop: Joi.object(),
+        sold: Joi.number().default(0),
+        stock: Joi.string(),
+        numOfReviews: Joi.number().default(0),
+        reviews: Joi.array().items(
+            Joi.object({
+                star: Joi.number().required(),
+                comment: Joi.string().required(),
+                postedBy: Joi.string().required(),
+            })
+        ),
+        totalRating: Joi.number().default(0),
+        anotherNewField: Joi.any(),
     });
     return schema.validate(event);
 }

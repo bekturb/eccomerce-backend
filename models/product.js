@@ -35,6 +35,11 @@ const productSchema = new mongoose.Schema({
                 type: Number,
                 required: true,
             },
+            sold: {
+                type: Number,
+                required: true,
+                default: 0,
+            },
             size: Number,
             images: [
                 {
@@ -56,7 +61,7 @@ const productSchema = new mongoose.Schema({
         type: Object,
         required: true,
     },
-    sold: {
+    totalSold: {
         type: Number,
         required: true,
         default: 0,
@@ -105,6 +110,7 @@ function validateProject(project) {
                 originalPrice: Joi.number(),
                 discountPrice: Joi.number().required(),
                 quantity: Joi.number().required(),
+                sold: Joi.number().default(0),
                 images: Joi.array().items(
                     Joi.object({
                         url: Joi.string(),

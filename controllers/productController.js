@@ -51,6 +51,44 @@ class ProductController {
         }
     }
 
+    async addDiscountPrice (req, res) {
+        try {
+
+            const saleSchema = Joi.object({
+                startDate: Joi.date(),
+                endDate: Joi.date(),
+                salePercentage: Joi.number(),
+            });
+
+            const {error} = saleSchema.validate(req.body);
+            if (error)
+                return res.status(400).send({message: error.details[0].message});
+
+            const productId = req.params.id;
+            const product = await Product.findById(productId);
+
+            if (!product) {
+                return res.status(404).send("Product not found");
+            }
+
+            product.startDate = req.body.startDate;
+            product.endDate = req.body.endDate;
+            product.salePercentage = req.body.salePercentage;
+
+            const adjustedDiscountPrice = (product.originalPrice * (100 - req.body.salePercentage)) / 100;
+
+            product.variants.forEach((variant) => {
+                variant.discountPrice = adjustedDiscountPrice;
+            });
+
+            const updatedProduct = await product.save();
+
+            res.status(200).send(updatedProduct);
+        } catch (error) {
+            res.status(400).send(error);
+        }
+    }
+
     async getAll(req, res) {
         const products = await Product.find().sort("name");
         res.send(products)

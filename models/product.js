@@ -47,15 +47,6 @@ const productSchema = new mongoose.Schema({
                     public_id: String,
                 },
             ],
-            startDate: {
-                type: Date,
-            },
-            endDate: {
-                type: Date,
-            },
-            salePercentage: {
-                type: Number,
-            },
         }
     ],
     totalQuantity: {
@@ -97,6 +88,15 @@ const productSchema = new mongoose.Schema({
             },
         }
     ],
+    startDate: {
+        type: Date,
+    },
+    endDate: {
+        type: Date,
+    },
+    salePercentage: {
+        type: Number,
+    },
     totalRating: {
         type: Number,
         default: 0,
@@ -126,9 +126,6 @@ function validateProject(project) {
                         public_id: Joi.string(),
                     })
                 ),
-                startDate: Joi.date(),
-                endDate: Joi.date(),
-                salePercentage: Joi.number(),
             })
         ),
         totalQuantity: Joi.number(),

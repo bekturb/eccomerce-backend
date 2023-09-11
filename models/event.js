@@ -59,6 +59,15 @@ const eventSchema = new mongoose.Schema({
                     public_id: String,
                 },
             ],
+            startDate: {
+                type: Date,
+            },
+            endDate: {
+                type: Date,
+            },
+            salePercentage: {
+                type: Number,
+            },
         }
     ],
     totalQuantity: {
@@ -131,6 +140,9 @@ function validateEvent(event) {
                         public_id: Joi.string(),
                     })
                 ),
+                startDate: Joi.date(),
+                endDate: Joi.date(),
+                salePercentage: Joi.number(),
             })
         ),
         totalQuantity: Joi.number(),

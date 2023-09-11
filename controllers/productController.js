@@ -55,9 +55,9 @@ class ProductController {
         try {
 
             const saleSchema = Joi.object({
-                startDate: Joi.date(),
-                endDate: Joi.date(),
-                salePercentage: Joi.number(),
+                startDate: Joi.date().required(),
+                endDate: Joi.date().required(),
+                salePercentage: Joi.number().required(),
             });
 
             const {error} = saleSchema.validate(req.body);

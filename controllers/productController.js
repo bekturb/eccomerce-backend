@@ -75,10 +75,9 @@ class ProductController {
             product.endDate = req.body.endDate;
             product.salePercentage = req.body.salePercentage;
 
-            const adjustedDiscountPrice = (product.originalPrice * (100 - req.body.salePercentage)) / 100;
-
             product.variants.forEach((variant) => {
-                variant.discountPrice = +adjustedDiscountPrice;
+                const newDiscountPrice = (variant.originalPrice * (100 - req.body.salePercentage)) / 100;
+                variant.discountPrice = newDiscountPrice;
             });
 
             const updatedProduct = await product.save();

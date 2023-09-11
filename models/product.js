@@ -26,10 +26,12 @@ const productSchema = new mongoose.Schema({
     variants: [
         {
             color: String,
-            originalPrice: Number,
+            originalPrice: {
+                type: Number,
+                required: true
+            },
             discountPrice: {
                 type: Number,
-                required: true,
             },
             quantity: {
                 type: Number,
@@ -117,7 +119,6 @@ function validateProject(project) {
             Joi.object({
                 color: Joi.string(),
                 originalPrice: Joi.number(),
-                discountPrice: Joi.number().required(),
                 quantity: Joi.number().required(),
                 sold: Joi.number().default(0),
                 images: Joi.array().items(

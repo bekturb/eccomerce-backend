@@ -4,25 +4,30 @@ const {Product} = require("../models/product");
 const resetSalesTask = async () => {
     try {
         const currentDate = new Date();
-        const products = await Product.find({});
+        const products = await Product.find();
 
-        products.forEach((product) => {
-            product.variants.forEach((variant) => {
-                if (variant.endDate && variant.endDate < currentDate) {
-                    variant.startDate = null;
-                    variant.endDate = null;
-                    variant.salePercentage = null;
+        if (!products) {
+            console.log("Products not found");
+            return;
+        }
+
+        products.forEach(async (product) => {
+            if (product.endDate && product.endDate < currentDate) {
+                product.startDate = null;
+                product.endDate = null;
+                product.salePercentage = null;
+
+                product.variants.forEach((variant) => {
                     variant.discountPrice = variant.originalPrice;
-                }
-            });
+                });
 
-            product.save();
+                await product.save();
+                console.log(`Reset sales for product ${product._id}`);
+            }
         });
-
-        console.log("Sale resets completed.");
     } catch (error) {
         console.error("Error resetting sales:", error);
     }
 };
 
-cron.schedule("0 0 * * *", resetSalesTask);
+cron.schedule("0 * * * * *", resetSalesTask);

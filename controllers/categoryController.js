@@ -39,6 +39,16 @@ class CategoryController {
         }
     }
 
+    async getCategory (req,res) {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id))
+            return res.status(404).send("Invalid Id");
+
+        let category = await Category.findById(req.params.id);
+        if (!category) return res.status(404).send({message: "No category for the given Id"});
+
+        return res.status(200).send(category)
+    }
+
     async update(req, res) {
         if (!mongoose.Types.ObjectId.isValid(req.params.id))
             return res.status(404).send("Invalid Id");

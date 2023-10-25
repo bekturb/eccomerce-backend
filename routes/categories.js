@@ -6,7 +6,7 @@ const admin = require("../middlewares/admin");
 
 router.post("/", [auth, admin], CategoryController.create);
 router.get("/", CategoryController.getCategories);
-router.get("/:id", CategoryController.getCategory);
+router.get("/:slug", CategoryController.getCategory);
 router.put("/:id", CategoryController.update);
 
 module.exports = router;

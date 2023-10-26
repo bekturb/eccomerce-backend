@@ -7,7 +7,6 @@ router.post("/", [auth], ProductController.create);
 router.put("/add-sale/:id", [auth], ProductController.addDiscountPrice);
 router.get("/", ProductController.getAll);
 router.get("/get-product/:id", ProductController.getOne);
-router.get("/get-products/:slug", ProductController.getProductByMainCategory);
 router.put("/update/:id", [auth], ProductController.update);
 router.delete("/delete/:id", [auth], ProductController.delete);
 router.put("/add-review", [auth], ProductController.createProductReview);

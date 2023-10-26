@@ -317,30 +317,6 @@ class ProductController {
             res.status(201).send(user)
         }
     }
-
-    async getProductByMainCategory (res, req) {
-        try {
-            const categorySlug = req.params.slug;
-
-            const category = await Category.findOne({ slug: categorySlug });
-
-            if (!category) {
-                return res.status(404).send('Category not found' );
-            }
-
-            const categoryIds = [category._id];
-            const subcategories = await Category.find({ parentId: { $in: categoryIds } });
-            const subcategoryIds = subcategories.map((subcategory) => subcategory._id);
-            const allCategoryIds = [...categoryIds, ...subcategoryIds];
-
-            const products = await Product.find({ category: { $in: allCategoryIds } });
-
-            res.send(products);
-        } catch (error) {
-            console.error(error);
-            res.status(500).json('Server error');
-        }
-    }
 }
 
 module.exports = new ProductController();

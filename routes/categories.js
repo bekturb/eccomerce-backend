@@ -5,7 +5,8 @@ const auth = require("../middlewares/auth");
 const admin = require("../middlewares/admin");
 
 router.post("/", [auth, admin], CategoryController.create);
-router.get("/", CategoryController.getCategories);
+router.get("/", CategoryController.getCategoriesByOrder);
+router.get("/all", CategoryController.getCategories);
 router.get("/:slug", CategoryController.getCategory);
 router.put("/:id", CategoryController.update);
 

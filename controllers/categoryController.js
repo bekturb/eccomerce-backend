@@ -32,6 +32,11 @@ class CategoryController {
 
     async getCategories (req,res) {
         const categories = await Category.find().sort("name");
+        res.status(200).send(categories)
+    }
+
+    async getCategoriesByOrder (req,res) {
+        const categories = await Category.find().sort("name");
 
         if (categories){
             const categoryList = createCategories(categories);

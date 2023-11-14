@@ -1,10 +1,9 @@
 const {Category, validate} = require("../models/category");
 const slugify = require("slugify");
-const {createCategories} = require("../utils/createCategories");
 const mongoose = require("mongoose");
+const {createCategories} = require("../utils/createCategories");
 
 class CategoryController {
-
     async create(req, res) {
 
         const {error} = validate(req.body);

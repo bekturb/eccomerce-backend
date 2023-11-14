@@ -8,7 +8,6 @@ const {User} = require("../models/user");
 const {Brand} = require("../models/brand");
 
 class ProductController {
-
     async create(req, res) {
 
         const {error} = validate(req.body);

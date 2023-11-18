@@ -16,9 +16,9 @@ class CartController {
                         {
                             product: req.body.product,
                             quantity: req.body.quantity,
-                            price: req.body.price
                         }
-                    ]
+                    ],
+                    price: req.body.price
                 });
 
                 await cart.save();

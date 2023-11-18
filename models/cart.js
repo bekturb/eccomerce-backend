@@ -7,9 +7,9 @@ const cartSchema = new mongoose.Schema({
         {
             product: { type: mongoose.Schema.Types.ObjectId, ref: "Products", required: true },
             quantity: { type: Number, default: 1 },
-            price: { type: Number, required: true },
         }
-    ]
+    ],
+    price: { type: Number, required: true },
 }, {
     timestamps: true
 });
@@ -18,7 +18,7 @@ const Cart = mongoose.model("Carts", cartSchema);
 
 function validateCart(project) {
     const schema = Joi.object({
-        product: Joi.object().required()
+        product: Joi.object().required(),
     });
     return schema.validate(project);
 }

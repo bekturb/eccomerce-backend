@@ -42,7 +42,9 @@ const productSchema = new mongoose.Schema({
                 required: true,
                 default: 0,
             },
-            size: Number,
+            specificAttributes: {
+               type: mongoose.Schema.Types.Mixed,
+            },
             images: [
                 {
                     url: String,
@@ -103,7 +105,6 @@ const productSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
-    anotherNewField: mongoose.Schema.Types.Mixed,
 }, { timestamps: true });
 
 const Product = mongoose.model("Products", productSchema);
@@ -121,6 +122,7 @@ function validateProject(project) {
                 originalPrice: Joi.number(),
                 quantity: Joi.number().required(),
                 sold: Joi.number().default(0),
+                specificAttributes: Joi.any(),
                 images: Joi.array().items(
                     Joi.object({
                         url: Joi.string(),
@@ -143,7 +145,6 @@ function validateProject(project) {
             })
         ),
         totalRating: Joi.number().default(0),
-        anotherNewField: Joi.any(),
     });
     return schema.validate(project);
 }

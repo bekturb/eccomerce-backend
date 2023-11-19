@@ -96,7 +96,7 @@ class ProductController {
         if (!mongoose.Types.ObjectId.isValid(req.params.id))
             return res.status(404).send("Invalid Id");
 
-        let product = await Product.findById(req.params.id).populate("brands");
+        let product = await Product.findById(req.params.id).populate("Brand");
         if (!product) return res.status(404).send("No project for the given Id");
 
         res.send(product)

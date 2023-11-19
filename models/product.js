@@ -105,6 +105,9 @@ const productSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    anotherNewField: {
+        type: mongoose.Schema.Types.Mixed,
+    },
 }, { timestamps: true });
 
 const Product = mongoose.model("Products", productSchema);
@@ -145,6 +148,7 @@ function validateProject(project) {
             })
         ),
         totalRating: Joi.number().default(0),
+        anotherNewField: Joi.any(),
     });
     return schema.validate(project);
 }

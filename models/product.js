@@ -14,12 +14,12 @@ const productSchema = new mongoose.Schema({
     },
     brand: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "brands",
+        ref: "Brand",
         required: true,
     },
     category: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Categories",
+        ref: "Category",
         required: true,
     },
     tags: [String],
@@ -87,7 +87,7 @@ const productSchema = new mongoose.Schema({
             },
             postedBy: {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: "users",
+                ref: "User",
                 required: true,
             },
         }

@@ -29,7 +29,7 @@ const brandSchema = new mongoose.Schema({
 }, {timestamps: true});
 
 
-const Brand = mongoose.model("brands", brandSchema);
+const Brand = mongoose.model("Brand", brandSchema);
 
 function validateBrand(brand) {
     const schema = Joi.object({

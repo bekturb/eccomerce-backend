@@ -12,7 +12,7 @@ const accountSchema = new mongoose.Schema({
     },
 }, {timestamps: true});
 
-const Account = mongoose.model("accounts", accountSchema);
+const Account = mongoose.model("Account", accountSchema);
 
 function validateAccount(account) {
     const schema = Joi.object({

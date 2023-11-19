@@ -110,7 +110,7 @@ const productSchema = new mongoose.Schema({
     },
 }, { timestamps: true });
 
-const Product = mongoose.model("Products", productSchema);
+const Product = mongoose.model("Product", productSchema);
 
 function validateProject(project) {
     const schema = Joi.object({

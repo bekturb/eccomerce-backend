@@ -75,7 +75,7 @@ const userSchema = new mongoose.Schema({
             },
         }
     ],
-    wishList: [{type: mongoose.Schema.Types.ObjectId, ref: "Projects"}],
+    wishList: [{type: mongoose.Schema.Types.ObjectId, ref: "Product"}],
 }, {timestamps: true});
 
 userSchema.methods.generateAuthToken = function () {
@@ -83,7 +83,7 @@ userSchema.methods.generateAuthToken = function () {
     return token;
 };
 
-const User = mongoose.model("users", userSchema);
+const User = mongoose.model("User", userSchema);
 
 function validateUser(user) {
     const schema = Joi.object({

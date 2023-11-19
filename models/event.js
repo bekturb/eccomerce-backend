@@ -14,12 +14,12 @@ const eventSchema = new mongoose.Schema({
     },
     brand: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "brands",
+        ref: "Brand",
         required: true,
     },
     category: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Categories",
+        ref: "Category",
         required: true,
     },
     tags: [String],
@@ -104,7 +104,7 @@ const eventSchema = new mongoose.Schema({
             },
             postedBy: {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: "users",
+                ref: "User",
                 required: true,
             },
         }
@@ -116,7 +116,7 @@ const eventSchema = new mongoose.Schema({
     anotherNewField: mongoose.Schema.Types.Mixed,
 }, { timestamps: true });
 
-const Event = mongoose.model("Events", eventSchema);
+const Event = mongoose.model("Event", eventSchema);
 
 function validateEvent(event) {
     const schema = Joi.object({

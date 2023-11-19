@@ -32,7 +32,7 @@ const couponSchema = new mongoose.Schema({
     }
 }, {timestamps: true});
 
-const Coupon = mongoose.model("Coupons", couponSchema);
+const Coupon = mongoose.model("Coupon", couponSchema);
 
 function validateCoupon(user) {
     const schema = Joi.object({

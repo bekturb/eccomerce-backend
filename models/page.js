@@ -27,13 +27,13 @@ const pageSchema = new mongoose.Schema({
 
     category: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Categories',
+        ref: 'Category',
         required: true,
         unique: true
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'users',
+        ref: 'User',
         required: true
     }
 }, {timestamps: true});

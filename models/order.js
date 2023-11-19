@@ -46,7 +46,7 @@ const orderSchema = new mongoose.Schema({
     },
 });
 
-const Order = mongoose.model("Orders", orderSchema);
+const Order = mongoose.model("Order", orderSchema);
 
 function validateOrder(req) {
     const schema = Joi.object({

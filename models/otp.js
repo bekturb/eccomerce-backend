@@ -9,7 +9,7 @@ const otpSchema = new mongoose.Schema({
     },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "users"
+        ref: "User"
     },
     createdAt: { type: Date, default: Date.now, index: {expires: 300}}
 }, {timestamps: true});
@@ -20,7 +20,7 @@ otpSchema.pre("save", async function (next) {
     next();
 })
 
-const Otp = mongoose.model("otp", otpSchema);
+const Otp = mongoose.model("Otp", otpSchema);
 function validateVerify(req) {
     const schema = Joi.object({
         otp: Joi.string().required(),

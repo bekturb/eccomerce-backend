@@ -17,7 +17,7 @@ const withdrawSchema = new mongoose.Schema({
 }, {timestamps: true});
 
 
-const Withdraw = mongoose.model("Withdraws", withdrawSchema);
+const Withdraw = mongoose.model("Withdraw", withdrawSchema);
 
 function validateWithdraw(withdraw) {
     const schema = Joi.object({

@@ -30,7 +30,7 @@ const categorySchema = new mongoose.Schema({
 }, {timestamps: true});
 
 
-const Category = mongoose.model("Categories", categorySchema);
+const Category = mongoose.model("Category", categorySchema);
 
 function validateCategory(category) {
     const schema = Joi.object({

@@ -20,7 +20,7 @@ shopOtpSchema.pre("save", async function (next) {
     next();
 });
 
-const ShopOtp = mongoose.model("ShopOtps", shopOtpSchema);
+const ShopOtp = mongoose.model("ShopOtp", shopOtpSchema);
 function validateVerify(req) {
     const schema = Joi.object({
         otp: Joi.string().required(),

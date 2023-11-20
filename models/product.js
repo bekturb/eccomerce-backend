@@ -81,6 +81,10 @@ const productSchema = new mongoose.Schema({
                 type: Number,
                 required: true
             },
+            title: {
+                type: String,
+                required: true
+            },
             comment: {
                 type: String,
                 required: true
@@ -147,6 +151,7 @@ function validateProject(project) {
         reviews: Joi.array().items(
             Joi.object({
                 star: Joi.number().required(),
+                title: Joi.string().required(),
                 comment: Joi.string().required(),
                 postedBy: Joi.string().required(),
             })

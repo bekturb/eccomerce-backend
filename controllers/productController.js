@@ -180,6 +180,7 @@ class ProductController {
     async createProductReview(req, res) {
         const validateReview = Joi.object({
             star: Joi.number().required(),
+            title: Joi.string().required(),
             comment: Joi.string().required(),
             productId: Joi.string().required()
         });
@@ -188,10 +189,11 @@ class ProductController {
         if (error)
             return res.status(400).send({message: error.details[0].message});
 
-        const {star, comment, productId} = req.body;
+        const {star, title, comment, productId} = req.body;
 
         const review = {
             star: Number(star),
+            title,
             comment,
             postedBy: req.user._id,
         };
@@ -207,7 +209,7 @@ class ProductController {
         if (alreadyRated) {
             product.reviews.forEach((rev) => {
                 if (rev.postedBy.toString() === req.user._id.toString())
-                    (rev.star = star), (rev.comment = comment);
+                    (rev.star = star), (rev.title = title), (rev.comment = comment);
             });
         } else {
             product.reviews.push(review);

@@ -16,7 +16,6 @@ const couponRoute = require("../routes/coupons");
 const orderRoute = require("../routes/orders");
 const pageRoute = require("../routes/pages");
 const passwordResetRoute = require("../routes/resetPassword");
-
 const imagesRoute = require("../routes/images");
 
 module.exports = function (app) {

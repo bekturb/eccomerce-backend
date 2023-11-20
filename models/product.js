@@ -90,7 +90,10 @@ const productSchema = new mongoose.Schema({
                 ref: "User",
                 required: true,
             },
-            timestamps: true
+            postedDate: {
+                type: Date,
+                default: Date.now,
+            }
         },
     ],
     startDate: {

@@ -90,8 +90,8 @@ const productSchema = new mongoose.Schema({
                 ref: "User",
                 required: true,
             },
+            timestamps: true
         },
-        { timestamps: true }
     ],
     startDate: {
         type: Date,

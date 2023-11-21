@@ -79,15 +79,12 @@ const productSchema = new mongoose.Schema({
         {
             star: {
                 type: Number,
-                required: true
             },
             title: {
                 type: String,
-                required: true
             },
             comment: {
                 type: String,
-                required: true
             },
             postedBy: {
                 type: mongoose.Schema.Types.ObjectId,
@@ -150,10 +147,10 @@ function validateProject(project) {
         numOfReviews: Joi.number().default(0),
         reviews: Joi.array().items(
             Joi.object({
-                star: Joi.number().required(),
-                title: Joi.string().required(),
-                comment: Joi.string().required(),
-                postedBy: Joi.string().required(),
+                star: Joi.number(),
+                title: Joi.string(),
+                comment: Joi.string(),
+                postedBy: Joi.string(),
             })
         ),
         totalRating: Joi.number().default(0),

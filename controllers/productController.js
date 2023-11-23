@@ -179,9 +179,9 @@ class ProductController {
 
     async createProductReview(req, res) {
         const validateReview = Joi.object({
-            star: Joi.number().required(),
-            title: Joi.string().required(),
-            comment: Joi.string().required(),
+            star: Joi.number(),
+            title: Joi.string(),
+            comment: Joi.string(),
             productId: Joi.string().required()
         });
 

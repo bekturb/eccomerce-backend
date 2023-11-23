@@ -79,6 +79,7 @@ const productSchema = new mongoose.Schema({
         {
             star: {
                 type: Number,
+                default: 0
             },
             title: {
                 type: String,

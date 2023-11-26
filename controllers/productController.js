@@ -238,6 +238,7 @@ class ProductController {
                 _id: user._id,
                 firstName: user.firstName
             },
+            postedDate: new Date(),
         }
 
         res.status(200).send(response);

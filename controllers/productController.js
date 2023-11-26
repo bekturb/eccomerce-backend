@@ -202,7 +202,7 @@ class ProductController {
         if (!product)
             return res.status(400).send("Not found product");
 
-        const user = await Product.findById(req.user._id)
+        const user = await User.findById(req.user._id)
         if (!user)
             return res.status(400).send("Not found user");
 

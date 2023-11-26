@@ -185,6 +185,8 @@ class ProductController {
             productId: Joi.string().required()
         });
 
+        console.log(req.user)
+
         const {error} = validateReview.validate(req.body);
         if (error)
             return res.status(400).send({message: error.details[0].message});

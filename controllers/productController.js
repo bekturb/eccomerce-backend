@@ -185,8 +185,6 @@ class ProductController {
             productId: Joi.string().required()
         });
 
-        console.log(req.user)
-
         const {error} = validateReview.validate(req.body);
         if (error)
             return res.status(400).send({message: error.details[0].message});
@@ -203,6 +201,10 @@ class ProductController {
         const product = await Product.findById(productId)
         if (!product)
             return res.status(400).send("Not found product");
+
+        const user = await Product.findById(req.user._id)
+        if (!user)
+            return res.status(400).send("Not found user");
 
         let alreadyRated = await product.reviews.find(
             (rev) => rev.postedBy.toString() === req.user._id.toString()
@@ -233,8 +235,8 @@ class ProductController {
             title,
             comment,
             postedBy: {
-                _id: req.user._id,
-                firstName: req.user.firstName
+                _id: user._id,
+                firstName: user.firstName
             },
         }
 

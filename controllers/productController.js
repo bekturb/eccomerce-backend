@@ -226,9 +226,17 @@ class ProductController {
 
         await product.save({validateBeforeSave: false});
 
-        res.status(200).send({
-            success: true,
-        });
+        const response = {
+            star: Number(star),
+            title,
+            comment,
+            postedBy: {
+                _id: req.user._id,
+                firstName: req.user.firstName
+            },
+        }
+
+        res.status(200).send(response);
     }
 
     async getAllReviews(req, res) {

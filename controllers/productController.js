@@ -331,6 +331,16 @@ class ProductController {
             res.status(201).send(user)
         }
     }
+    async getPersonalWishList(req, res) {
+        const userId = req.params.userId;
+
+        const user = await User.findById(userId).populate('wishList');
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+
+        res.status(200).send(user.wishList);
+    }
 }
 
 module.exports = new ProductController();

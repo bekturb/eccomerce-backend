@@ -11,7 +11,7 @@ router.put("/update/:id", [auth], ProductController.update);
 router.delete("/delete/:id", [auth], ProductController.delete);
 router.put("/add-review", [auth], ProductController.createProductReview);
 router.get("/:productId/all-reviews", ProductController.getAllReviews);
-router.get("wishlist/:userId", [auth], ProductController.getPersonalWishList);
+router.get("/wishlist/:userId", [auth], ProductController.getPersonalWishList);
 router.delete("/:productId/reviews/:reviewId", [auth], ProductController.deleteReview);
 router.post("/wishlist", [auth], ProductController.addToWishlist);
 

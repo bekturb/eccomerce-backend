@@ -332,7 +332,7 @@ class ProductController {
         }
     }
     async getPersonalWishList(req, res) {
-        const userId = req.params.userId;
+        const userId = req.user._id;
 
         const user = await User.findById(userId).populate('wishList');
         if (!user) {

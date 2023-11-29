@@ -328,7 +328,7 @@ class ProductController {
                 {
                     new: true,
                 });
-            res.status(201).send(user)
+            res.status(201).send(user.wishList)
         }
     }
     async getPersonalWishList(req, res) {

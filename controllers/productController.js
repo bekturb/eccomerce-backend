@@ -319,7 +319,7 @@ class ProductController {
                 },
                 {
                     new: true,
-                });
+                }).populate("wishList");
             res.status(201).send(user.wishList)
         } else {
             let user = await User.findByIdAndUpdate(_id, {
@@ -327,7 +327,7 @@ class ProductController {
                 },
                 {
                     new: true,
-                });
+                }).populate("wishList");
             res.status(201).send(user.wishList)
         }
     }

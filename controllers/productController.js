@@ -334,6 +334,8 @@ class ProductController {
     async getPersonalWishList(req, res) {
         const {_id} = req.user;
 
+        console.log(_id, "_id")
+
         const user = await User.findById(_id).populate('wishList');
         if (!user) {
             return res.status(404).send('User not found');

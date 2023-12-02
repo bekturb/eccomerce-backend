@@ -1,5 +1,4 @@
 const {Brand, validate} = require("../models/brand");
-const slugify = require("slugify");
 const mongoose = require("mongoose");
 const {Category} = require("../models/category");
 
@@ -38,6 +37,16 @@ class BrandController {
         res.status(200).send(brands)
     }
 
+    async getBrand(req, res) {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id))
+            return res.status(404).send("Invalid Id");
+
+        let brand = await Brand.findById(req.params.id).populate('brand');
+        if (!brand) return res.status(404).send("No brand for the given Id");
+
+        res.send(brand)
+    }
+
     async updateBrand(req, res) {
 
         if (!mongoose.Types.ObjectId.isValid(req.params.id))
@@ -47,12 +56,6 @@ class BrandController {
         if (error) return res.status(400).send(error.details[0].message);
 
         const { name, brandImage, categoryIds } = req.body;
-
-        const brandObj = {
-            name,
-            slug: name,
-            brandImage,
-        }
 
         const brand = await Brand.findById(req.params.id);
 

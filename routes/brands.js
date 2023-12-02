@@ -6,6 +6,7 @@ const admin = require("../middlewares/admin");
 
 router.post("/", [auth, admin], BrandController.create);
 router.get("/", BrandController.getBrands);
+router.get("/get-single-brand/:id", BrandController.getBrand);
 router.put("/:id", BrandController.updateBrand);
 
 module.exports = router;

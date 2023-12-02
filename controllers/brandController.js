@@ -41,7 +41,7 @@ class BrandController {
         if (!mongoose.Types.ObjectId.isValid(req.params.id))
             return res.status(404).send("Invalid Id");
 
-        let brand = await Brand.findById(req.params.id).populate('brand');
+        let brand = await Brand.findById(req.params.id);
         if (!brand) return res.status(404).send("No brand for the given Id");
 
         res.send(brand)

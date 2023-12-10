@@ -7,7 +7,7 @@ const seller = require("../middlewares/seller");
 router.post("/", [auth, seller], CouponController.create);
 router.get("/get-all", [auth, seller], CouponController.getAll);
 router.get("/get-all/:id", [auth, seller], CouponController.getOne);
-router.get("/get-coupon-value/:name", [auth, seller], CouponController.getCouponValue);
+router.get("/get-coupon-value/:name", [auth], CouponController.getCouponValue);
 router.delete("/delete/:id", [auth, seller], CouponController.delete);
 
 module.exports = router;

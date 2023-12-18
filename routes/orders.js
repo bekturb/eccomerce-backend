@@ -5,7 +5,7 @@ const auth = require("../middlewares/auth");
 const admin = require("../middlewares/admin");
 const seller = require("../middlewares/seller");
 
-router.post("/", orderController.create);
+router.post("/create-order", orderController.create);
 router.get("/get-all-orders/:userId", orderController.getAll);
 router.get("/get-seller-all-orders/:shopId", orderController.getSellerOrders);
 router.put("/update-order-status/:id", [auth, seller], orderController.updateStatus);

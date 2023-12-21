@@ -8,7 +8,6 @@ const bcrypt = require("bcrypt");
 const sendEmail = require("../utils/sendEmail");
 const otpGenerator = require("otp-generator");
 const {Shop, validateShop} = require("../models/shop");
-const {User} = require("../models/user");
 
 class ShopController {
 
@@ -78,6 +77,15 @@ class ShopController {
         }
     }
 
+    async addFollower(req,res) {
+        const { followerId } = req.body;
+        const userId = req.user._id;
+
+        const shop = await Shop.findByIdAndUpdate(followerId, { $push: { followers: userId } }, { new: true });
+
+        res.status(200).send(shop);
+    }
+
     async getAll(req, res) {
         const shops = await Shop.find()
             .sort("name")
@@ -89,7 +97,7 @@ class ShopController {
         if (!mongoose.Types.ObjectId.isValid(req.params.id))
             return res.status(404).send("Invalid Id");
 
-        let shop = await Shop.findById(req.params.id)
+        let shop = await Shop.findById(req.params.id).populate('followers')
             .select({hash_password: 0});
         if (!shop) return res.status(404).send({message: "No shop for the given Id"});
 

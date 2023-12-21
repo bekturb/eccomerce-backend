@@ -77,6 +77,7 @@ const shopSchema = new mongoose.Schema({
     },
     resetPasswordToken: String,
     resetPasswordTime: Date,
+    followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 });
 
 shopSchema.methods.generateAuthToken = function() {
@@ -101,7 +102,8 @@ function validateShop(user) {
         description: Joi.string(),
         address: Joi.string().required(),
         avatar: Joi.string().required(),
-        zipCode: Joi.number().required()
+        zipCode: Joi.number().required(),
+        followers: Joi.array(),
     });
 
     return schema.validate(user);

@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 const {User} = require("../models/user");
 const {Brand} = require("../models/brand");
+const {findCategoryIdByCategoryName, findBrandByName} = require("../helper/data");
 
 class ProductController {
     async create(req, res) {
@@ -302,6 +303,22 @@ class ProductController {
         res.status(200).send({
             success: true,
         });
+    }
+
+    async searchProducts (req, res) {
+
+        const { searchQuery } = req.query;
+
+        const results = await Product.find({
+            $or: [
+                { name: { $regex: searchQuery, $options: 'i' } },
+                { categoryId: await findCategoryIdByCategoryName(searchQuery) },
+                { brand: await findBrandByName(searchQuery) },
+                { _id: searchQuery },
+            ],
+        });
+
+        res.status(200).send(results);
     }
 
     async addToWishlist(req, res) {

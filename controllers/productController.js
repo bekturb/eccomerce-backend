@@ -315,7 +315,6 @@ class ProductController {
                     { name: { $regex: key, $options: 'i' } },
                     { categoryId: await findCategoryIdByCategoryName(key) },
                     { brand: await findBrandByName(key) },
-                    { _id: key },
                 ],
             });
 

@@ -309,6 +309,8 @@ class ProductController {
 
         const { search } = req.query;
 
+        console.log(search)
+
         const results = await Product.find({
             $or: [
                 { name: { $regex: search, $options: 'i' } },

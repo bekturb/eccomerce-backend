@@ -307,18 +307,23 @@ class ProductController {
 
     async searchProducts (req, res) {
 
-        const { key } = req.params;
+        try {
+            const { key } = req.params;
 
-        const results = await Product.find({
-            $or: [
-                { name: { $regex: key, $options: 'i' } },
-                { categoryId: await findCategoryIdByCategoryName(key) },
-                { brand: await findBrandByName(key) },
-                { _id: key },
-            ],
-        });
+            const results = await Product.find({
+                $or: [
+                    { name: { $regex: key, $options: 'i' } },
+                    { categoryId: await findCategoryIdByCategoryName(key) },
+                    { brand: await findBrandByName(key) },
+                    { _id: key },
+                ],
+            });
 
-        res.status(200).send(results);
+            res.status(200).send(results);
+        } catch (error) {
+            console.error('Error in searchProducts:', error);
+            res.status(500).send('Unexpected error on server!');
+        }
     }
 
     async addToWishlist(req, res) {

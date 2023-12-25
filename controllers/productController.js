@@ -307,12 +307,9 @@ class ProductController {
 
     async searchProducts (req, res) {
 
-        const { search } = req.query;
-
         const results = await Product.find({
             $or: [
-                { name: { $regex: search, $options: 'i' } },
-                { _id: search },
+                { name: { $regex: req.params.key} },
             ],
         });
 

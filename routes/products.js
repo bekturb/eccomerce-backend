@@ -13,7 +13,7 @@ router.put("/add-review", [auth], ProductController.createProductReview);
 router.get("/:productId/all-reviews", ProductController.getAllReviews);
 router.get("/get-personal/wishlist", [auth], ProductController.getPersonalWishList);
 router.delete("/:productId/reviews/:reviewId", [auth], ProductController.deleteReview);
-router.get("/search/searchData?search", ProductController.searchProducts);
+router.get("/search/searchData", ProductController.searchProducts);
 router.post("/wishlist", [auth], ProductController.addToWishlist);
 
 module.exports = router;

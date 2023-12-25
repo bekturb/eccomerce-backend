@@ -311,16 +311,16 @@ class ProductController {
 
         console.log(search)
 
-        const results = await Product.find({
-            $or: [
-                { name: { $regex: search, $options: 'i' } },
-                { categoryId: await findCategoryIdByCategoryName(search) },
-                { brand: await findBrandByName(search) },
-                { _id: search },
-            ],
-        });
-
-        res.status(200).send(results);
+        // const results = await Product.find({
+        //     $or: [
+        //         { name: { $regex: search, $options: 'i' } },
+        //         { categoryId: await findCategoryIdByCategoryName(search) },
+        //         { brand: await findBrandByName(search) },
+        //         { _id: search },
+        //     ],
+        // });
+        //
+        // res.status(200).send(results);
     }
 
     async addToWishlist(req, res) {

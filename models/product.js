@@ -23,6 +23,11 @@ const productSchema = new mongoose.Schema({
         required: true,
     },
     tags: [String],
+    vendorCode: {
+        type: Number,
+        required: true,
+        length: 9
+    },
     variants: [
         {
             color: String,
@@ -125,6 +130,7 @@ function validateProject(project) {
         brand: Joi.string().required(),
         category: Joi.string().required(),
         tags: Joi.array().items(Joi.string()),
+        vendorCode: Joi.number().required(),
         variants: Joi.array().items(
             Joi.object({
                 color: Joi.string(),

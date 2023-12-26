@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 const {User} = require("../models/user");
 const {Brand} = require("../models/brand");
-const {findCategoryIdByCategoryName, findBrandByName} = require("../helper/data");
+const {findCategoryIdByCategoryName, findBrandByName, generateVendorCode} = require("../helper/data");
 
 class ProductController {
     async create(req, res) {
@@ -26,6 +26,8 @@ class ProductController {
         if (!shop)
             return res.status(400).send("Not found shop");
 
+        const vendorCode = await generateVendorCode();
+
         const {name, description, brand, category, tags, variants, shopId, stock, anotherNewField,} = req.body
         const totalQuantity = variants.reduce((sum, variant) => sum + variant.quantity, 0);
 
@@ -37,6 +39,7 @@ class ProductController {
                 category,
                 brand,
                 tags,
+                vendorCode,
                 totalQuantity,
                 stock,
                 variants,
@@ -310,17 +313,22 @@ class ProductController {
         try {
             const { key } = req.params;
 
-            const results = await Product.find({
-                $or: [
-                    { name: { $regex: key, $options: 'i' } },
-                    { categoryId: await findCategoryIdByCategoryName(key) },
-                    { brand: await findBrandByName(key) },
-                ],
-            });
+            const productByVendorCode = await Product.findOne({ vendorCode: parseInt(key) || 0 });
 
-            res.status(200).send(results);
+            if (productByVendorCode) {
+                res.status(200).send([productByVendorCode]);
+            } else {
+                const results = await Product.find({
+                    $or: [
+                        { name: { $regex: key, $options: 'i' } },
+                        { categoryId: await findCategoryIdByCategoryName(key) },
+                        { brand: await findBrandByName(key) },
+                    ],
+                });
+
+                res.status(200).send(results);
+            }
         } catch (error) {
-            console.error('Error in searchProducts:', error);
             res.status(500).send('Unexpected error on server!');
         }
     }

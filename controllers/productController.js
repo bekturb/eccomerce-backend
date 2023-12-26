@@ -7,6 +7,7 @@ const Joi = require("joi");
 const {User} = require("../models/user");
 const {Brand} = require("../models/brand");
 const {findCategoryIdByCategoryName, findBrandByName, generateVendorCode} = require("../helper/data");
+const {result} = require("lodash/object");
 
 class ProductController {
     async create(req, res) {
@@ -315,7 +316,7 @@ class ProductController {
             const productByVendorCode = await Product.findOne({ vendorCode: parseInt(key) || 0 });
 
             if (productByVendorCode) {
-                res.status(200).send(productByVendorCode);
+                res.status(200).send({product: productByVendorCode});
             } else {
                 const results = await Product.find({
                     $or: [
@@ -325,7 +326,7 @@ class ProductController {
                         { tags: { $in: [key] } },
                     ],
                 });
-                res.status(200).send(results);
+                res.status(200).send({products: results});
             }
     }
 

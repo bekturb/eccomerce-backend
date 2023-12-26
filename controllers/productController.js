@@ -310,7 +310,6 @@ class ProductController {
 
     async searchProducts (req, res) {
 
-        try {
             const { key } = req.params;
 
             const productByVendorCode = await Product.findOne({ vendorCode: parseInt(key) || 0 });
@@ -321,14 +320,13 @@ class ProductController {
                 const results = await Product.find({
                     $or: [
                         { name: { $regex: key, $options: 'i' } },
+                        { category: await findCategoryIdByCategoryName(key) },
+                        { brand: await findBrandByName(key) },
+                        { tags: { $in: [key] } },
                     ],
                 });
-
                 res.status(200).send(results);
             }
-        } catch (error) {
-            res.status(500).send('Unexpected error on server!');
-        }
     }
 
     async addToWishlist(req, res) {

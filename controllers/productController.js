@@ -321,8 +321,6 @@ class ProductController {
                 const results = await Product.find({
                     $or: [
                         { name: { $regex: key, $options: 'i' } },
-                        { categoryId: await findCategoryIdByCategoryName(key) },
-                        { brand: await findBrandByName(key) },
                     ],
                 });
 

@@ -316,10 +316,7 @@ class ProductController {
             const productByVendorCode = await Product.findOne({ vendorCode: parseInt(key) || 0 });
 
             if (productByVendorCode) {
-                res.status(200).send({
-                    products: productByVendorCode,
-                    foundBy: "vendorCode"
-                });
+                res.status(200).send(productByVendorCode);
             } else {
                 const results = await Product.find({
                     $or: [
@@ -329,10 +326,7 @@ class ProductController {
                     ],
                 });
 
-                res.status(200).send({
-                    products: results,
-                    foundBy: "other"
-                });
+                res.status(200).send(results);
             }
         } catch (error) {
             res.status(500).send('Unexpected error on server!');

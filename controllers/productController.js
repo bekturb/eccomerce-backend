@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 const {User} = require("../models/user");
 const {Brand} = require("../models/brand");
-const {searchProductsByImage, predictImage} = require("../helper/searchProductsByImage");
+const {searchProductsByImage} = require("../helper/searchProductsByImage");
 const {findCategoryIdByCategoryName, findBrandByName, generateVendorCode} = require("../helper/data");
 
 class ProductController {
@@ -331,26 +331,24 @@ class ProductController {
     }
 
     async searchProductByImage(req, res) {
-        try {
-            const { imageUrl } = req.body;
-            const inputs = [
-                {
-                    data: {
-                        image: {
-                            base64: req.file.buffer
-                        }
-                    }
-                }
-            ];
-            const results = await predictImage(inputs);
-            return res.send({
-                results
-            })
-        } catch (err) {
-            return res.status(400).send({
-                error: err
-            })
+        const imageUrl = req.params.image;
+
+        if (!imageUrl) {
+            return res.status(400).json({error: 'Image URL is required'});
         }
+
+        const concepts = await searchProductsByImage(imageUrl);
+
+        console.log(concepts, "con")
+
+        const foundProducts = await Promise.all(
+            concepts.map(async (concept) => {
+                const product = await Product.findOne({name: concept.name});
+                return product ? product.toObject() : null;
+            })
+        );
+
+        res.status(200).send({concepts, foundProducts});
     }
 
     async addToWishlist(req, res) {

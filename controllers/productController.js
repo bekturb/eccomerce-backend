@@ -6,8 +6,8 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 const {User} = require("../models/user");
 const {Brand} = require("../models/brand");
+const {searchProductsByImage, predictImage} = require("../helper/searchProductsByImage");
 const {findCategoryIdByCategoryName, findBrandByName, generateVendorCode} = require("../helper/data");
-const {result} = require("lodash/object");
 
 class ProductController {
     async create(req, res) {
@@ -55,7 +55,7 @@ class ProductController {
         }
     }
 
-    async addDiscountPrice (req, res) {
+    async addDiscountPrice(req, res) {
         try {
 
             const saleSchema = Joi.object({
@@ -309,25 +309,48 @@ class ProductController {
         });
     }
 
-    async searchProducts (req, res) {
+    async searchProducts(req, res) {
 
-            const { key } = req.params;
+        const {key} = req.params;
 
-            const productByVendorCode = await Product.findOne({ vendorCode: parseInt(key) || 0 });
+        const productByVendorCode = await Product.findOne({vendorCode: parseInt(key) || 0});
 
-            if (productByVendorCode) {
-                res.status(200).send({product: productByVendorCode});
-            } else {
-                const results = await Product.find({
-                    $or: [
-                        { name: { $regex: key, $options: 'i' } },
-                        { category: await findCategoryIdByCategoryName(key) },
-                        { brand: await findBrandByName(key) },
-                        { tags: { $in: [key] } },
-                    ],
-                });
-                res.status(200).send({products: results});
-            }
+        if (productByVendorCode) {
+            res.status(200).send({product: productByVendorCode});
+        } else {
+            const results = await Product.find({
+                $or: [
+                    {name: {$regex: key, $options: 'i'}},
+                    {category: await findCategoryIdByCategoryName(key)},
+                    {brand: await findBrandByName(key)},
+                    {tags: {$in: [key]}},
+                ],
+            });
+            res.status(200).send({products: results});
+        }
+    }
+
+    async searchProductByImage(req, res) {
+        try {
+            const { imageUrl } = req.body;
+            const inputs = [
+                {
+                    data: {
+                        image: {
+                            base64: req.file.buffer
+                        }
+                    }
+                }
+            ];
+            const results = await predictImage(inputs);
+            return res.send({
+                results
+            })
+        } catch (err) {
+            return res.status(400).send({
+                error: err
+            })
+        }
     }
 
     async addToWishlist(req, res) {
@@ -357,6 +380,7 @@ class ProductController {
             res.status(201).send(user.wishList)
         }
     }
+
     async getPersonalWishList(req, res) {
         const {_id} = req.user;
 

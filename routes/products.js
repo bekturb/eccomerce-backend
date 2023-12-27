@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const ProductController = require('../controllers/productController');
 const auth = require("../middlewares/auth");
+const {upload} = require("../helper/searchProductsByImage");
 
 router.post("/", [auth], ProductController.create);
 router.put("/add-sale/:id", [auth], ProductController.addDiscountPrice);
@@ -14,6 +15,7 @@ router.get("/:productId/all-reviews", ProductController.getAllReviews);
 router.get("/get-personal/wishlist", [auth], ProductController.getPersonalWishList);
 router.delete("/:productId/reviews/:reviewId", [auth], ProductController.deleteReview);
 router.get("/search/searchData/:key", ProductController.searchProducts);
+router.get("/search/search-by-image/", upload.single("file"), ProductController.searchProductByImage);
 router.post("/wishlist", [auth], ProductController.addToWishlist);
 
 module.exports = router;

@@ -14,7 +14,7 @@ router.get("/:productId/all-reviews", ProductController.getAllReviews);
 router.get("/get-personal/wishlist", [auth], ProductController.getPersonalWishList);
 router.delete("/:productId/reviews/:reviewId", [auth], ProductController.deleteReview);
 router.get("/search/searchData/:key", ProductController.searchProducts);
-router.get("/search/search-by-image/:image", ProductController.searchProductByImage);
+router.post("/search/search-by-image", ProductController.upload.single('image'), ProductController.searchProductByImage);
 router.post("/wishlist", [auth], ProductController.addToWishlist);
 
 module.exports = router;

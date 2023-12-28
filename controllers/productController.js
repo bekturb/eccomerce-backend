@@ -1,3 +1,6 @@
+const multer = require('multer');
+const Clarifai = require('clarifai');
+require("dotenv").config()
 const {Product, validate} = require("../models/product");
 const slugify = require("slugify");
 const {Category} = require("../models/category");
@@ -6,10 +9,21 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 const {User} = require("../models/user");
 const {Brand} = require("../models/brand");
-const {searchProductsByImage} = require("../helper/searchProductsByImage");
 const {findCategoryIdByCategoryName, findBrandByName, generateVendorCode} = require("../helper/data");
+const initializeClarifai = require("../utils/initializeClarifai");
 
 class ProductController {
+
+    constructor() {
+        try {
+            this.clarifai = new Clarifai.App({ apiKey: `${process.env.CLARIFAI_API_KEY}` });
+        } catch (error) {
+            console.error('Error initializing Clarifai:', error);
+        }
+
+        this.storage = multer.memoryStorage();
+        this.upload = multer({ storage: this.storage });
+    }
     async create(req, res) {
 
         const {error} = validate(req.body);
@@ -331,24 +345,34 @@ class ProductController {
     }
 
     async searchProductByImage(req, res) {
-        const imageUrl = req.params.image;
 
-        if (!imageUrl) {
-            return res.status(400).json({error: 'Image URL is required'});
-        }
+            const imageBuffer = req.file.buffer;
 
-        const concepts = await searchProductsByImage(imageUrl);
+            const clarifai = initializeClarifai(`${process.env.CLARIFAI_API_KEY}`);
 
-        console.log(concepts, "con")
+            if (!clarifai) {
+                throw new Error('Clarifai initialization failed');
+            }
 
-        const foundProducts = await Promise.all(
-            concepts.map(async (concept) => {
-                const product = await Product.findOne({name: concept.name});
-                return product ? product.toObject() : null;
-            })
-        );
+            const clarifaiResponse = await clarifai.models.predict(Clarifai.GENERAL_MODEL, {
+                base64: imageBuffer.toString('base64'),
+            });
 
-        res.status(200).send({concepts, foundProducts});
+            const concepts = clarifaiResponse.outputs[0].data.concepts.map(concept => concept.name);
+
+            const query = {
+                $or: [
+                    { 'variants.images.url': { $in: concepts } },
+                    { tags: { $in: concepts } },
+                    { 'category.name': { $in: concepts } },
+                    { 'brand.name': { $in: concepts } },
+                    { name: { $regex: new RegExp(concepts.join('|'), 'i') } },
+                ],
+            };
+
+            const matchingProducts = await Product.find(query).populate(["category", "brand"]);
+
+            res.status(200).send(matchingProducts);
     }
 
     async addToWishlist(req, res) {

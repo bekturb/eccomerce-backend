@@ -372,7 +372,7 @@ class ProductController {
 
             const matchingProducts = await Product.find(query).populate(["category", "brand"]);
 
-            res.status(200).send(matchingProducts);
+            res.status(200).send({products: matchingProducts});
     }
 
     async addToWishlist(req, res) {

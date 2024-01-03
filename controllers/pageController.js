@@ -14,7 +14,7 @@ class ProductController {
             if (!category)
                 return res.status(400).send("Not found category");
 
-            req.body.navigateTo = `/bannerClicked?categoryId=${req.body.category}`;
+            req.body.navigateTo = `/bannerClicked?categoryId=${req.body.category}&sale=${req.body.sale || 0}`;
             req.body.createdBy = req.user._id;
 
             let page = await Page.findOne({category: req.body.category});

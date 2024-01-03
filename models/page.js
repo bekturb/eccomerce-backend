@@ -21,6 +21,10 @@ const pageSchema = new mongoose.Schema({
         required: true,
     },
 
+    sale: {
+        type: Number
+    },
+
     navigateTo: {
         type: String,
     },
@@ -47,6 +51,7 @@ function validatePage(page) {
         description: Joi.string().trim().required(),
         suggestion: Joi.string().required(),
         banner: Joi.string().required(),
+        sale: Joi.number(),
         navigateTo: Joi.string(),
         category: Joi.string().required(),
     });

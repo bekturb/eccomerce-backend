@@ -18,9 +18,6 @@ const shopSchema = new mongoose.Schema({
         required: [true, "Please enter your password"],
         minLength: [8, "Password should be greater than 6 characters"],
     },
-    description: {
-        type: String,
-    },
     address: {
         type: String,
         required: true,
@@ -99,7 +96,6 @@ function validateShop(user) {
             .onlyLatinCharacters()
             .required(),
         phoneNumber: Joi.number(),
-        description: Joi.string(),
         address: Joi.string().required(),
         avatar: Joi.string().required(),
         zipCode: Joi.number().required(),

@@ -9,7 +9,6 @@ const sendEmail = require("../utils/sendEmail");
 const otpGenerator = require("otp-generator");
 const {Shop, validateShop} = require("../models/shop");
 const {Otp} = require("../models/otp");
-const {User} = require("../models/user");
 
 class ShopController {
 
@@ -47,7 +46,6 @@ class ShopController {
             name: req.body.name,
             email: req.body.email,
             password: req.body.password,
-            description: req.body.description,
             avatar: req.body.avatar,
             address: req.body.address,
             phoneNumber: req.body.phoneNumber,
@@ -184,7 +182,6 @@ class ShopController {
     async updateProfile(req, res) {
         const updateProfileSchema = Joi.object({
             name: Joi.string().trim().required(),
-            description: Joi.string().trim(),
             avatar: Joi.string(),
             address: Joi.string(),
             phoneNumber: Joi.number(),
@@ -197,7 +194,6 @@ class ShopController {
 
         let shop = await Shop.findByIdAndUpdate(req.user._id, {
             name: req.body.name,
-            description: req.body.description,
             avatar: req.body.avatar,
             address: req.body.address,
             phoneNumber: req.body.phoneNumber,

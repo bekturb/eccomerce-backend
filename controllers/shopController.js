@@ -136,7 +136,7 @@ class ShopController {
 
         let shop = await Shop.findById(req.params.id)
             .select({password: 0});
-        if (!shop) return res.status(404).send({message: "No user for the given Id"});
+        if (!shop) return res.status(404).send({message: "No shop for the given Id"});
 
         const OTP = otpGenerator.generate(6, {
             digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false
@@ -257,7 +257,7 @@ class ShopController {
         }, {new: true});
 
         if (!shop)
-            return res.status(404).send({message: "No user for the given Id"});
+            return res.status(404).send({message: "No shop for the given Id"});
 
         res.status(200).send({message: "You successfully changed your password"})
     }
@@ -318,7 +318,7 @@ class ShopController {
 
         let shop = await Shop.findOne({email: req.body.email});
 
-        if (!shop) return res.status(400).send({message: "Not found user"});
+        if (!shop) return res.status(400).send({message: "Not found shop"});
 
         if (req.body.newPassword !== req.body.confirmPassword){
             return res.status(400).send('Password does not match');

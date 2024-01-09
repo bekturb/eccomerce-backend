@@ -60,7 +60,7 @@ class ShopController {
 
         if (validateEmail(req.body.email)) {
             await sendEmail(shop.email, "Verify your email", `Your OTP is ${OTP}.\nDo not share with anyone`);
-            await ShopOtp.create({otp: OTP, userId: shop._id});
+            await ShopOtp.create({otp: OTP, shopId: shop._id});
         } else if (validateNumber(req.body.email)) {
             client.messages
                 .create({
@@ -68,7 +68,7 @@ class ShopController {
                     from: process.env.TWILLIO_PHONE_NUMBER,
                     to: req.body.email
                 }).then(() => {
-                ShopOtp.create({otp: OTP, userId: shop._id});
+                ShopOtp.create({otp: OTP, shopId: shop._id});
             })
         } else {
             return res.status(400).send("Invalid phone/email.");
@@ -84,20 +84,21 @@ class ShopController {
         if (error)
             return res.status(400).send(error.details[0].message);
 
-        let OTP = await ShopOtp.findOne();
+        let OTP = await ShopOtp.findOne({ shopId: req.params.id });
         if (!OTP)
             return res.status(400).send('Invalid OTP number');
 
         const isMatch = await bcrypt.compare(req.body.otp, OTP.otp);
 
         if (!isMatch) {
-            return res.send("Incorrect OTP or it has been expired.");
+            return res.status(400).send("Incorrect OTP or it has been expired.");
         }
 
         const shop = await Shop.findById(OTP.shopId);
         if (shop) {
-            await Shop.findByIdAndUpdate(OTP.shopId, { verified: true });
-            await ShopOtp.deleteOne({ _id: OTP._id });
+            await User.findByIdAndUpdate(OTP.shopId, {verified: true});
+            await Otp.deleteOne({_id: OTP._id});
+
             const token = shop.generateAuthToken();
             res.header("x-auth-token", token).send({message: "You successfully authorized!", token});
         } else {
@@ -143,7 +144,7 @@ class ShopController {
 
         if (validateEmail(shop.email)) {
             await sendEmail(shop.email, "Verify your email", `Your OTP is ${OTP}.\nDo not share with anyone`);
-            await ShopOtp.create({otp: OTP, userId: shop._id});
+            await ShopOtp.create({otp: OTP, shopId: shop._id});
         } else if (validateNumber(shop.email)) {
             client.messages
                 .create({
@@ -151,7 +152,7 @@ class ShopController {
                     from: process.env.TWILLIO_PHONE_NUMBER,
                     to: req.body.email
                 }).then(() => {
-                ShopOtp.create({otp: OTP, userId: shop._id});
+                ShopOtp.create({otp: OTP, shopId: shop._id});
             })
         } else {
             return res.status(400).send("Invalid phone/email.");

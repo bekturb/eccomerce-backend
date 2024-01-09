@@ -4,7 +4,6 @@ const bcrypt = require("bcrypt");
 const sendEmail = require("../utils/sendEmail");
 const otpGenerator = require("otp-generator");
 const {ShopOtp} = require("../models/shopOtp");
-const {Otp} = require("../models/otp");
 const accountSid = process.env.API_KEY;
 const authToken =  process.env.AUTH_TOKEN;
 const client = require('twilio')(accountSid, authToken);
@@ -55,7 +54,7 @@ class ShopAuthController {
 
             if (validateEmail(req.body.email)) {
                 await sendEmail(shop.email, "Verify your email", `Your OTP is ${OTP}.\nDo not share with anyone`);
-                await Otp.create({otp: OTP, shopId: shop._id});
+                await ShopOtp.create({otp: OTP, shopId: shop._id});
             } else if (validateNumber(req.body.email)) {
                 client.messages
                     .create({
@@ -63,7 +62,7 @@ class ShopAuthController {
                         from:  process.env.TWILLIO_PHONE_NUMBER,
                         to: req.body.email
                     }).then(() => {
-                    Otp.create({otp: OTP, shopId: shop._id});
+                    ShopOtp.create({otp: OTP, shopId: shop._id});
                 })
             } else {
                 return res.status(400).send("Invalid phone/email.");

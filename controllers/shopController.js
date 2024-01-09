@@ -96,8 +96,8 @@ class ShopController {
 
         const shop = await Shop.findById(OTP.shopId);
         if (shop) {
-            await User.findByIdAndUpdate(OTP.shopId, {verified: true});
-            await Otp.deleteOne({_id: OTP._id});
+            await Shop.findByIdAndUpdate(OTP.shopId, {verified: true});
+            await ShopOtp.deleteOne({_id: OTP._id});
 
             const token = shop.generateAuthToken();
             res.header("x-auth-token", token).send({message: "You successfully authorized!", token});

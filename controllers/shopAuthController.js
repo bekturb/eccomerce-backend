@@ -43,7 +43,7 @@ class ShopAuthController {
             return res.status(400).send('Password wasn\'t found');
 
         if (!shop.verified) {
-            let OTP = await ShopOtp.findOne({ userId: user._id });
+            let OTP = await ShopOtp.findOne({ shopId: user._id });
 
             if (OTP){
                 await ShopOtp.deleteOne({_id: OTP._id});
@@ -55,7 +55,7 @@ class ShopAuthController {
 
             if (validateEmail(req.body.email)) {
                 await sendEmail(shop.email, "Verify your email", `Your OTP is ${OTP}.\nDo not share with anyone`);
-                await Otp.create({otp: OTP, userId: shop._id});
+                await Otp.create({otp: OTP, shopId: shop._id});
             } else if (validateNumber(req.body.email)) {
                 client.messages
                     .create({
@@ -63,7 +63,7 @@ class ShopAuthController {
                         from:  process.env.TWILLIO_PHONE_NUMBER,
                         to: req.body.email
                     }).then(() => {
-                    Otp.create({otp: OTP, userId: shop._id});
+                    Otp.create({otp: OTP, shopId: shop._id});
                 })
             } else {
                 return res.status(400).send("Invalid phone/email.");

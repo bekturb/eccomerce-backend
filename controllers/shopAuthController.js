@@ -43,7 +43,7 @@ class ShopAuthController {
             return res.status(400).send('Password wasn\'t found');
 
         if (!shop.verified) {
-            let OTP = await ShopOtp.findOne({ shopId: user._id });
+            let OTP = await ShopOtp.findOne({ shopId: shop._id });
 
             if (OTP){
                 await ShopOtp.deleteOne({_id: OTP._id});

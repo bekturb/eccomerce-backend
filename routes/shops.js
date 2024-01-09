@@ -6,8 +6,8 @@ const seller = require("../middlewares/seller");
 const admin = require("../middlewares/admin");
 
 router.post("/register", shopController.register);
-router.get("/:id/me", [auth], shopController.getMe);
-router.post("/verify", shopController.verify);
+router.get("/:id/me", [auth, seller], shopController.getMe);
+router.post("/:id/verify", shopController.verify);
 router.get("/:id/resend-otp", shopController.resendOtp);
 router.get("/get-user/:id", [auth], shopController.getSingle);
 router.get("/add-follower", [auth], shopController.addFollower);

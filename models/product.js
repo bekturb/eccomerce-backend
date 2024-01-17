@@ -9,7 +9,6 @@ const productSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        required: true,
         trim: true,
     },
     brand: {
@@ -125,7 +124,7 @@ const Product = mongoose.model("Product", productSchema);
 function validateProject(project) {
     const schema = Joi.object({
         name: Joi.string().required().trim(),
-        description: Joi.string().required().trim(),
+        description: Joi.string().trim(),
         brand: Joi.string().required(),
         category: Joi.string().required(),
         tags: Joi.array().items(Joi.string()),

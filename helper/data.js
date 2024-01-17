@@ -33,6 +33,5 @@ const generateVendorCode = async () => {
 
 module.exports = {
     findCategoryIdByCategoryName,
-    findBrandByName,
     generateVendorCode
 };

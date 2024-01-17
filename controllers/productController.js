@@ -8,8 +8,7 @@ const {Shop} = require("../models/shop");
 const mongoose = require("mongoose");
 const Joi = require("joi");
 const {User} = require("../models/user");
-const {Brand} = require("../models/brand");
-const {findCategoryIdByCategoryName, findBrandByName, generateVendorCode} = require("../helper/data");
+const {findCategoryIdByCategoryName, generateVendorCode} = require("../helper/data");
 const initializeClarifai = require("../utils/initializeClarifai");
 
 class ProductController {
@@ -111,7 +110,7 @@ class ProductController {
         if (!mongoose.Types.ObjectId.isValid(req.params.id))
             return res.status(404).send("Invalid Id");
 
-        let product = await Product.findById(req.params.id).populate('brand');
+        let product = await Product.findById(req.params.id);
         if (!product) return res.status(404).send("No project for the given Id");
 
         res.send(product)
@@ -329,7 +328,7 @@ class ProductController {
                 $or: [
                     {name: {$regex: key, $options: 'i'}},
                     {category: await findCategoryIdByCategoryName(key)},
-                    {brand: await findBrandByName(key)},
+                    {brand: {$regex: key, $options: 'i'}},
                     {tags: {$in: [key]}},
                 ],
             });
@@ -358,12 +357,12 @@ class ProductController {
                     { 'variants.images.url': { $in: concepts } },
                     { tags: { $in: concepts } },
                     { 'category.name': { $in: concepts } },
-                    { 'brand.name': { $in: concepts } },
+                    { 'brand': { $in: concepts } },
                     { name: { $regex: new RegExp(concepts.join('|'), 'i') } },
                 ],
             };
 
-            const matchingProducts = await Product.find(query).populate(["category", "brand"]);
+            const matchingProducts = await Product.find(query).populate(["category"]);
 
             res.status(200).send({products: matchingProducts});
     }

@@ -12,16 +12,6 @@ async function findCategoryIdByCategoryName(categoryName) {
     }
 }
 
-async function findBrandByName(brandName) {
-    try {
-        const brand = await Brand.findOne({ name: brandName });
-        return brand ? brand._id : null;
-    } catch (error) {
-        console.error('Error finding brand by name:', error);
-        return null;
-    }
-}
-
 const generateVendorCode = async () => {
     let isUnique = false;
     let randomNumber;

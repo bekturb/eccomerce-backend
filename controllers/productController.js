@@ -33,10 +33,6 @@ class ProductController {
         if (!categoryId)
             return res.status(400).send("Not found category");
 
-        const brandId = await Brand.findById(req.body.brand)
-        if (!brandId)
-            return res.status(400).send("Not found brand");
-
         const shop = await Shop.findById(req.body.shopId)
         if (!shop)
             return res.status(400).send("Not found shop");
@@ -132,9 +128,6 @@ class ProductController {
         const categoryId = await Category.findById(req.body.category)
         if (!categoryId)
             return res.status(400).send("Not found category");
-
-        if (!brandId)
-            return res.status(400).send("Not found brand");
 
         const shop = await Shop.findById(req.body.shopId)
         if (!shop)

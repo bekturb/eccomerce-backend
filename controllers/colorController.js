@@ -30,12 +30,13 @@ class ColorController {
 
     async getColor (req,res) {
 
-        const colorSlug = req.params.slug;
+        if (!mongoose.Types.ObjectId.isValid(req.params.id))
+            return res.status(404).send("Invalid Id");
 
-        const color = await Color.findOne({ slug: colorSlug });
-        if (!color) return res.status(404).send({message: "No color for the given slug"});
+        let color = await Color.findById(req.params.id);
+        if (!color) return res.status(404).send("No color for the given Id");
 
-        return res.status(200).send(color);
+        res.send(color)
     }
 
     async updateColor(req, res) {

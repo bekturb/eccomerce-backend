@@ -28,7 +28,11 @@ const productSchema = new mongoose.Schema({
     },
     variants: [
         {
-            color: String,
+            color: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Color',
+                required: true,
+            },
             originalPrice: {
                 type: Number,
                 required: true
@@ -131,8 +135,8 @@ function validateProject(project) {
         vendorCode: Joi.number().required(),
         variants: Joi.array().items(
             Joi.object({
-                color: Joi.string(),
-                originalPrice: Joi.number(),
+                color: Joi.object().required(),
+                originalPrice: Joi.number().required(),
                 quantity: Joi.number().required(),
                 sold: Joi.number().default(0),
                 specificAttributes: Joi.any(),

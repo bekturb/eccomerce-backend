@@ -135,7 +135,7 @@ function validateProject(project) {
         vendorCode: Joi.number().required(),
         variants: Joi.array().items(
             Joi.object({
-                color: Joi.object().required(),
+                color: Joi.string().required(),
                 originalPrice: Joi.number().required(),
                 quantity: Joi.number().required(),
                 sold: Joi.number().default(0),

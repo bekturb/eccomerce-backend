@@ -102,7 +102,7 @@ class ProductController {
     }
 
     async getAll(req, res) {
-        const products = await Product.find().sort("name");
+        const products = await Product.find().sort("name").populate("variants.color", "name hex").exec();
         res.send(products)
     }
 

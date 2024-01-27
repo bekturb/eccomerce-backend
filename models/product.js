@@ -132,7 +132,7 @@ function validateProject(project) {
         brand: Joi.string().required(),
         category: Joi.string().required(),
         tags: Joi.array().items(Joi.string()),
-        vendorCode: Joi.number().required(),
+        vendorCode: Joi.number(),
         variants: Joi.array().items(
             Joi.object({
                 color: Joi.string().required(),

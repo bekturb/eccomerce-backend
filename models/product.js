@@ -149,7 +149,7 @@ function validateProject(project) {
             })
         ),
         totalQuantity: Joi.number(),
-        shopId: Joi.string().required(),
+        shopId: Joi.string(),
         shop: Joi.object(),
         sold: Joi.number().default(0),
         stock: Joi.string(),

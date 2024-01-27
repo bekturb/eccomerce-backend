@@ -25,6 +25,8 @@ class ProductController {
     }
     async create(req, res) {
 
+        const shopId = req.user._id
+
         const {error} = validate(req.body);
         if (error) return res.status(400).send(error.details[0].message);
 
@@ -32,13 +34,13 @@ class ProductController {
         if (!categoryId)
             return res.status(400).send("Not found category");
 
-        const shop = await Shop.findById(req.body.shopId)
+        const shop = await Shop.findById(shopId)
         if (!shop)
             return res.status(400).send("Not found shop");
 
         const vendorCode = await generateVendorCode();
 
-        const {name, description, brand, category, tags, variants, shopId, stock, anotherNewField,} = req.body
+        const {name, description, brand, category, tags, variants, stock, anotherNewField,} = req.body
         const totalQuantity = variants.reduce((sum, variant) => sum + variant.quantity, 0);
 
         try {

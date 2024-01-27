@@ -140,12 +140,7 @@ function validateProject(project) {
                 quantity: Joi.number().required(),
                 sold: Joi.number().default(0),
                 specificAttributes: Joi.any(),
-                images: Joi.array().items(
-                    Joi.object({
-                        url: Joi.string(),
-                        public_id: Joi.string(),
-                    })
-                ),
+                images: Joi.array().required(),
             })
         ),
         totalQuantity: Joi.number(),

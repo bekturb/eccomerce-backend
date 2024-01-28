@@ -41,7 +41,7 @@ class ProductController {
         const vendorCode = await generateVendorCode();
 
         const {name, description, brand, category, tags, variants, stock, anotherNewField,} = req.body
-        const totalQuantity = variants.reduce((sum, variant) => sum + variant.quantity, 0);
+        const totalQuantity = variants.reduce((sum, variant) => +sum + +variant.quantity, 0);
 
         try {
             let product = new Product({

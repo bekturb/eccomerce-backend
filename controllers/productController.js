@@ -127,6 +127,21 @@ class ProductController {
         res.send(product)
     }
 
+    async getOneForUpdate(req, res) {
+        if (!mongoose.Types.ObjectId.isValid(req.params.productId))
+            return res.status(404).send("Invalid Id");
+
+        let product = await Product.findById(req.params.productId)
+            .populate({
+                path: 'category',
+                select: 'name',
+            })
+            .exec();
+        if (!product) return res.status(404).send("No project for the given Id");
+
+        res.send(product)
+    }
+
     async update(req, res) {
 
         if (!mongoose.Types.ObjectId.isValid(req.params.id))

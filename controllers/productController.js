@@ -112,7 +112,16 @@ class ProductController {
         if (!mongoose.Types.ObjectId.isValid(req.params.id))
             return res.status(404).send("Invalid Id");
 
-        let product = await Product.findById(req.params.id).populate("variants.color", "name hex").exec();
+        let product = await Product.findById(req.params.id)
+            .populate({
+            path: 'category',
+            select: 'name',
+        })
+            .populate({
+                path: 'variants.color',
+                select: 'name hex',
+            })
+            .exec();
         if (!product) return res.status(404).send("No project for the given Id");
 
         res.send(product)
@@ -399,8 +408,6 @@ class ProductController {
 
     async getPersonalWishList(req, res) {
         const {_id} = req.user;
-
-        console.log(_id, "_id")
 
         const user = await User.findById(_id).populate('wishList');
         if (!user) {

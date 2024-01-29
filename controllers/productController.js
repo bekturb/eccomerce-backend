@@ -144,6 +144,8 @@ class ProductController {
 
     async update(req, res) {
 
+        const sellerId = req.user._id
+
         if (!mongoose.Types.ObjectId.isValid(req.params.id))
             return res.status(404).send("Invalid Id");
 
@@ -154,7 +156,7 @@ class ProductController {
         if (!categoryId)
             return res.status(400).send("Not found category");
 
-        const shop = await Shop.findById(req.body.shopId)
+        const shop = await Shop.findById(sellerId)
         if (!shop)
             return res.status(400).send("Not found shop");
 
@@ -165,7 +167,6 @@ class ProductController {
             category,
             tags,
             variants,
-            shopId,
             stock,
             anotherNewField,
         } = req.body
@@ -185,7 +186,7 @@ class ProductController {
                     stock,
                     variants,
                     shop: shop,
-                    shopId,
+                    shopId: sellerId,
                     anotherNewField,
                 }, {new: true});
 

@@ -171,7 +171,7 @@ class ProductController {
             anotherNewField,
         } = req.body
 
-        const totalQuantity = variants.reduce((sum, variant) => sum + variant.quantity, 0);
+        const totalQuantity = variants.reduce((sum, variant) => +sum + +variant.quantity, 0);
 
         try {
             let product = await Product.findByIdAndUpdate(req.params.id,

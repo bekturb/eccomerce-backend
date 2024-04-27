@@ -2,10 +2,11 @@ const {Order, validate} = require("../models/order");
 const {Shop} = require("../models/shop");
 const {Product} = require("../models/product");
 const mongoose = require("mongoose");
+const { updateProductQuantities } = require("../helper/updateProductQty");
 class OrderController {
 
     async create (req, res) {
-        try {
+        try {   
             const {error} = validate(req.body);
             if (error) return res.status(400).send(error.details[0].message)
 
@@ -33,6 +34,8 @@ class OrderController {
                 await order.save();
                 orders.push(order);
             }
+
+            await updateProductQuantities(cart)
 
             res.status(201).send({
                 success: true,

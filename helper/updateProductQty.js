@@ -10,6 +10,7 @@ async function updateProductQuantities(cart) {
             }
 
             product.totalQuantity -= item.quantity;
+            product.totalSold += item.quantity
 
             const variant = product.variants.find(v => v._id.toString() === item.variantId);
             if (!variant) {
@@ -17,7 +18,8 @@ async function updateProductQuantities(cart) {
             }
 
             variant.quantity -= item.quantity;
-
+            variant.sold -= item.quantity;
+            
             await product.save();
         }
     } catch (error) {

@@ -18,7 +18,7 @@ async function updateProductQuantities(cart) {
             }
 
             variant.quantity -= item.quantity;
-            variant.sold -= item.quantity;
+            variant.sold += item.quantity;
             
             await product.save();
         }

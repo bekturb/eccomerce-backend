@@ -6,6 +6,7 @@ module.exports = function () {
     mongoose.set("strictQuery", true);
     mongoose.connect(`mongodb+srv://${process.env.MONGODB_DB_USER}:${process.env.MONGODB_DB_PASSWORD}@cluster0.pq2qluf.mongodb.net/${process.env.MONGODB_DB_DATABASE}?retryWrites=true&w=majority`,
         {
+        replicaSet: "rs",
         useNewUrlParser: true,
         useUnifiedTopology: true
     })

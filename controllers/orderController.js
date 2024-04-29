@@ -2,10 +2,14 @@ const {Order, validate} = require("../models/order");
 const {Shop} = require("../models/shop");
 const {Product} = require("../models/product");
 const mongoose = require("mongoose");
-const { updateProductQuantities } = require("../helper/updateProductQty");
+
 class OrderController {
 
     async create (req, res) {
+        const session = await mongoose.startSession();
+
+        session.startTransaction();
+
         try {   
             const {error} = validate(req.body);
             if (error) return res.status(400).send(error.details[0].message)
@@ -35,14 +39,37 @@ class OrderController {
                 orders.push(order);
             }
 
-            await updateProductQuantities(cart)
+            for (const item of cart) {
 
+            const product = await Product.findById(item.productId);
+            if (!product) {
+                res.status(500).send(`Product with ID ${item.productId} not found`);
+            }
+
+            product.totalQuantity -= item.quantity;
+            product.totalSold += item.quantity
+
+            const variant = product.variants.find(v => v._id.toString() === item.variantId);
+            if (!variant) {
+                res.status(500).send(`Variant with ID ${item.variantId} not found in product ${product._id}`);
+            }
+
+            variant.quantity -= item.quantity;
+            variant.sold += item.quantity;
+            
+            await product.save();
+        }
+
+        await session.commitTransaction();
             res.status(201).send({
                 success: true,
                 orders,
             });
         } catch (error) {
+            await session.abortTransaction();
             res.status(500).send('Order creation failed');
+        }finally {
+            session.endSession();
         }
     }
 

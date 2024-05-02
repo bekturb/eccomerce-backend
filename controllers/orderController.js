@@ -11,6 +11,7 @@ class OrderController {
         session.startTransaction();
 
         try {   
+
             const {error} = validate(req.body);
             if (error) return res.status(400).send(error.details[0].message)
 
@@ -34,16 +35,16 @@ class OrderController {
                     totalPrice,
                     paymentInfo,
                     shop: shopId,
-                });
+                }).session(session);
                 await order.save();
                 orders.push(order);
             }
 
             for (const item of cart) {
 
-            const product = await Product.findById(item.productId);
-            if (!product) {
-                res.status(500).send(`Product with ID ${item.productId} not found`);
+                const product = await Product.findById(item.productId).session(session);
+                if (!product) {
+                    throw new Error(`Product with ID ${item.productId} not found`);
             }
 
             product.totalQuantity -= item.quantity;
@@ -51,7 +52,7 @@ class OrderController {
 
             const variant = product.variants.find(v => v._id.toString() === item.variantId);
             if (!variant) {
-                res.status(500).send(`Variant with ID ${item.variantId} not found in product ${product._id}`);
+                throw new Error(`Variant with ID ${item.variantId} not found in product ${product._id}`);;
             }
 
             throw new Error("Kandaidyr kata paida boldu");

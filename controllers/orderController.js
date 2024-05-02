@@ -44,7 +44,7 @@ class OrderController {
 
                 const product = await Product.findById(item.productId).session(session);
                 if (!product) {
-                    throw new Error(`Product with ID ${item.productId} not found`);
+                    return res.status(500).send(`Product with ID ${item.productId} not found`);
             }
 
             product.totalQuantity -= item.quantity;
@@ -52,12 +52,10 @@ class OrderController {
 
             const variant = product.variants.find(v => v._id.toString() === item.variantId);
             if (!variant) {
-                throw new Error(`Variant with ID ${item.variantId} not found in product ${product._id}`);;
+                return res.status(500).send(`Variant with ID ${item.variantId} not found in product ${product._id}`);
             }
 
-            throw new Error("Kandaidyr kata paida boldu");
-
-            variant.quantity -= item.quantity;
+            variant.quantity -= item.quantity;``
             variant.sold += item.quantity;
             
             await product.save();

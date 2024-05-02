@@ -54,6 +54,8 @@ class OrderController {
                 res.status(500).send(`Variant with ID ${item.variantId} not found in product ${product._id}`);
             }
 
+            throw new Error("Kandaidyr kata paida boldu");
+
             variant.quantity -= item.quantity;
             variant.sold += item.quantity;
             

@@ -5,19 +5,18 @@ const mongoose = require("mongoose");
 
 class OrderController {
 
-    async create (req, res) {
+    async create(req, res) {
         const session = await mongoose.startSession();
-
-        session.startTransaction();
-
-        try {   
-
-            const {error} = validate(req.body);
-            if (error) return res.status(400).send(error.details[0].message)
-
+    
+        try {
+            session.startTransaction();
+    
+            const { error } = validate(req.body);
+            if (error) return res.status(400).send(error.details[0].message);
+    
             const { cart, shippingAddress, user, totalPrice, paymentInfo } = req.body;
             const shopItemsMap = new Map();
-
+    
             for (const item of cart) {
                 const { shopId } = item;
                 if (!shopItemsMap.has(shopId)) {
@@ -25,7 +24,7 @@ class OrderController {
                 }
                 shopItemsMap.get(shopId).push(item);
             }
-
+    
             const orders = [];
             for (const [shopId, items] of shopItemsMap) {
                 const order = new Order({
@@ -35,33 +34,36 @@ class OrderController {
                     totalPrice,
                     paymentInfo,
                     shop: shopId,
-                }).session(session);
-                await order.save();
+                });
+                await order.save({ session });
                 orders.push(order);
             }
-
+    
             for (const item of cart) {
-
                 const product = await Product.findById(item.productId).session(session);
                 if (!product) {
-                    throw new Error(`Product with ID ${item.productId} not found`);
+                    await session.abortTransaction();
+                    session.endSession();
+                    return res.status(500).send(`Product with ID ${item.productId} not found`);
+                }
+    
+                product.totalQuantity -= item.quantity;
+                product.totalSold += item.quantity;
+    
+                const variant = product.variants.find(v => v._id.toString() === item.variantId);
+                if (!variant) {
+                    await session.abortTransaction();
+                    session.endSession();
+                    return res.status(500).send(`Variant with ID ${item.variantId} not found in product ${product._id}`);
+                }
+    
+                variant.quantity -= item.quantity;
+                variant.sold += item.quantity;
+    
+                await product.save({ session });
             }
-
-            product.totalQuantity -= item.quantity;
-            product.totalSold += item.quantity
-
-            const variant = product.variants.find(v => v._id.toString() === item.variantId);
-            if (!variant) {
-                throw new Error(`Variant with ID ${item.variantId} not found in product ${product._id}`);
-            }
-
-            variant.quantity -= item.quantity;
-            variant.sold += item.quantity;
-            
-            await product.save();
-        }
-
-        await session.commitTransaction();
+    
+            await session.commitTransaction();
             res.status(201).send({
                 success: true,
                 orders,
@@ -69,7 +71,7 @@ class OrderController {
         } catch (error) {
             await session.abortTransaction();
             res.status(500).send('Order creation failed');
-        }finally {
+        } finally {
             session.endSession();
         }
     }

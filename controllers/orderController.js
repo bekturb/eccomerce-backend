@@ -8,63 +8,49 @@ class OrderController {
     async create(req, res) {
         const session = await mongoose.startSession();
     
-        session.startTransaction();
-    
         try {
-            const { error } = validate(req.body);
-            if (error) return res.status(400).send(error.details[0].message);
-    
-            const { cart, shippingAddress, user, totalPrice, paymentInfo } = req.body;
-            const shopItemsMap = new Map();
-    
-            for (const item of cart) {
-                const { shopId } = item;
-                if (!shopItemsMap.has(shopId)) {
-                    shopItemsMap.set(shopId, []);
-                }
-                shopItemsMap.get(shopId).push(item);
-            }
-    
-            const orders = [];
-            for (const [shopId, items] of shopItemsMap) {
-                const order = await Order.create({
-                    cart: items,
-                    shippingAddress,
-                    user,
-                    totalPrice,
-                    paymentInfo,
-                    shop: shopId,
-                }).session(session);
-                orders.push(order);
-            }
-    
-            for (const item of cart) {
-                const product = await Product.findById(item.productId).session(session);
-                if (!product) {
-                    return res.status(500).send(`Product with ID ${item.productId} not found`);
+            await session.withTransaction(async () => {
+                const { error } = validate(req.body);
+                if (error) {
+                    return res.status(400).send(error.details[0].message);
                 }
     
-                product.totalQuantity -= item.quantity;
-                product.totalSold += item.quantity;
+                const { cart, shippingAddress, user, totalPrice, paymentInfo } = req.body;
+                const orders = [];
     
-                const variant = product.variants.find(v => v._id.toString() === item.variantId);
-                if (!variant) {
-                    return res.status(500).send(`Variant with ID ${item.variantId} not found in product ${product._id}`);
+                for (const item of cart) {
+                    const product = await Product.findById(item.productId).session(session);
+                    if (!product) {
+                        throw new Error(`Product with ID ${item.productId} not found`);
+                    }
+    
+                    const variant = product.variants.find(v => v._id.toString() === item.variantId);
+                    if (!variant) {
+                        throw new Error(`Variant with ID ${item.variantId} not found in product ${product._id}`);
+                    }
+    
+                    product.totalQuantity -= item.quantity;
+                    product.totalSold += item.quantity;
+                    variant.quantity -= item.quantity;
+                    variant.sold += item.quantity;
+    
+                    await product.save();
+                    orders.push(await new Order({
+                        cart: [item],
+                        shippingAddress,
+                        user,
+                        totalPrice,
+                        paymentInfo,
+                        shop: product.shopId,
+                    }).session(session).save());
                 }
     
-                variant.quantity -= item.quantity;
-                variant.sold += item.quantity;
-    
-                await product.save();
-            }
-    
-            await session.commitTransaction();
-            res.status(201).send({
-                success: true,
-                orders,
+                res.status(201).send({
+                    success: true,
+                    orders,
+                });
             });
         } catch (error) {
-            await session.abortTransaction();
             res.status(500).send('Order creation failed');
         } finally {
             session.endSession();

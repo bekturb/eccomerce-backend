@@ -27,7 +27,7 @@ class OrderController {
     
             const orders = [];
             for (const [shopId, items] of shopItemsMap) {
-                const order = new Order({
+                const order = await Order.create({
                     cart: items,
                     shippingAddress,
                     user,
@@ -35,12 +35,11 @@ class OrderController {
                     paymentInfo,
                     shop: shopId,
                 }).session(session);
-                await order.save();
                 orders.push(order);
             }
     
             for (const item of cart) {
-                const product = await Product.findById(item.productId);
+                const product = await Product.findById(item.productId).session(session);
                 if (!product) {
                     return res.status(500).send(`Product with ID ${item.productId} not found`);
                 }

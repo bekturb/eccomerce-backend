@@ -7,6 +7,7 @@ const seller = require("../middlewares/seller");
 router.post("/",  [auth, seller],  ProductController.create);
 router.put("/add-sale/:id",  [auth, seller], ProductController.addDiscountPrice);
 router.get("/", ProductController.getAll);
+router.get("/get-shop-products/:shopId", [auth, seller], ProductController.getShopProducts);
 router.get("/get-product/:id", ProductController.getOne);
 router.get("/get-product-to-update/:productId", ProductController.getOneForUpdate);
 router.put("/update/:id",  [auth, seller], ProductController.update);

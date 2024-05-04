@@ -108,6 +108,16 @@ class ProductController {
         res.send(products)
     }
 
+    async getShopProducts(req, res) {
+        const { shopId } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(shopId))
+            return res.status(404).send("Invalid Id");
+
+        const products = await Product.find({shopId: shopId});
+        res.status(200).send(products)
+    }
+
     async getOne(req, res) {
         if (!mongoose.Types.ObjectId.isValid(req.params.id))
             return res.status(404).send("Invalid Id");

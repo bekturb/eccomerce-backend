@@ -1,15 +1,12 @@
 const {Order, validate} = require("../models/order");
 const {Shop} = require("../models/shop");
 const {Product} = require("../models/product");
-const mongoose = require("mongoose");
 
 class OrderController {
 
     async create(req, res) {
-        const session = await mongoose.startSession();
     
         try {
-            session.startTransaction();
     
             const { error } = validate(req.body);
             if (error) return res.status(400).send(error.details[0].message);
@@ -35,44 +32,15 @@ class OrderController {
                     paymentInfo,
                     shop: shopId,
                 });
-                await order.save({ session });
+                await order.save();
                 orders.push(order);
             }
-    
-            for (const item of cart) {
-                const product = await Product.findById(item.productId).session(session);
-                if (!product) {
-                    await session.abortTransaction();
-                    session.endSession();
-                    return res.status(500).send(`Product with ID ${item.productId} not found`);
-                }
-    
-                product.totalQuantity -= item.quantity;
-                product.totalSold += item.quantity;
-    
-                const variant = product.variants.find(v => v._id.toString() === item.variantId);
-                if (!variant) {
-                    await session.abortTransaction();
-                    session.endSession();
-                    return res.status(500).send(`Variant with ID ${item.variantId} not found in product ${product._id}`);
-                }
-    
-                variant.quantity -= item.quantity;
-                variant.sold += item.quantity;
-    
-                await product.save({ session });
-            }
-    
-            await session.commitTransaction();
-            res.status(201).send({
+                res.status(201).send({
                 success: true,
                 orders,
             });
         } catch (error) {
-            await session.abortTransaction();
             res.status(500).send('Order creation failed');
-        } finally {
-            session.endSession();
         }
     }
 
@@ -256,3 +224,26 @@ class OrderController {
 }
 
 module.exports = new OrderController();
+
+// for (const item of cart) {
+// const product = await Product.findById(item.productId);
+// if (!product) {
+//     await session.abortTransaction();
+//     session.endSession();
+//     return res.status(500).send(`Product with ID ${item.productId} not found`);
+// }
+
+// product.totalQuantity -= item.quantity;
+// product.totalSold += item.quantity;
+
+// const variant = product.variants.find(v => v._id.toString() === item.variantId);
+// if (!variant) {
+//     await session.abortTransaction();
+//     session.endSession();
+//     return res.status(500).send(`Variant with ID ${item.variantId} not found in product ${product._id}`);
+// }
+
+// variant.quantity -= item.quantity;
+// variant.sold += item.quantity;
+
+// await product.save({ session });

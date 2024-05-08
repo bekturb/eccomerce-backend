@@ -39,7 +39,7 @@ class CouponController {
         let coupon = await Coupon.findOne({ name: req.params.name });
         if (!coupon) return res.status(404).send("No coupon for the given name");
 
-        res.send(coupon)
+        res.status(201).send(coupon);
     }
     
     async delete(req, res) {

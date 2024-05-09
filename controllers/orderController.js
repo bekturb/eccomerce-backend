@@ -1,6 +1,7 @@
 const {Order, validate} = require("../models/order");
 const {Shop} = require("../models/shop");
 const {Product} = require("../models/product");
+const mongoose = require("mongoose");
 
 class OrderController {
 
@@ -69,14 +70,9 @@ class OrderController {
             return res.status(404).send("Invalid Id");
 
         try {
-            const orders = await Order.find({ "cart.shopId": req.params.shopId }).sort({
-                createdAt: -1,
-            });
+            const orders = await Order.find({ "cart.shopId": req.params.shopId }).sort({createdAt: -1,});
 
-            res.status(200).send({
-                success: true,
-                orders,
-            });
+            res.status(200).send(orders);
         } catch (error) {
             return res.status(500).send("'Order not found");
         }

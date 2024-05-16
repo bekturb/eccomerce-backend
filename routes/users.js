@@ -9,7 +9,7 @@ router.get("/me", [auth], userController.getMe);
 router.post("/:id/verify", userController.verify);
 router.get("/:id/resend-otp", userController.resendOtp);
 router.get("/get-user/:id", [auth, admin], userController.getSingle);
-router.get("/", [auth, admin], userController.getAll);
+router.get("/", [auth], userController.getAll);
 router.put("/block-user/:id", [auth, admin], userController.blockUser);
 router.put("/unblock-user/:id", [auth, admin], userController.unBlockUser);
 router.put("/update/profile", [auth], userController.updateProfile);

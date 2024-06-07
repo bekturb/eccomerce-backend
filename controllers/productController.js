@@ -252,7 +252,7 @@ class ProductController {
       if (result.deletedCount === 0) {
         return res.status(404).send("No products found for the given Id(s)");
       }
-      res.status(200).send(`${result.deletedCount} product(s) deleted`);
+      res.status(200).send({result, message: `${result.deletedCount} product(s) deleted`});
     } catch (error) {
       res.status(500).send("Server error");
     }

@@ -85,34 +85,39 @@ class ProductController {
         startDate: Joi.date().required(),
         endDate: Joi.date().required(),
         salePercentage: Joi.number().required(),
+        productIds: Joi.array().items(Joi.string().required()).required(),
       });
-
+  
       const { error } = saleSchema.validate(req.body);
-      if (error)
-        return res.status(400).send({ message: error.details[0].message });
-
-      const productId = req.params.id;
-      const product = await Product.findById(productId);
-
-      if (!product) {
-        return res.status(404).send("Product not found");
-      }
-
-      product.startDate = req.body.startDate;
-      product.endDate = req.body.endDate;
-      product.salePercentage = req.body.salePercentage;
-
-      product.variants.forEach((variant) => {
-        const newDiscountPrice =
-          (variant.originalPrice * (100 - req.body.salePercentage)) / 100;
-        variant.discountPrice = newDiscountPrice;
-      });
-
-      const updatedProduct = await product.save();
-
-      res.status(200).send(updatedProduct);
+      if (error) return res.status(400).send({ message: error.details[0].message });
+  
+      const { startDate, endDate, salePercentage, productIds } = req.body;
+  
+      // Find and update products
+      const updatedProducts = await Promise.all(
+        productIds.map(async (productId) => {
+          const product = await Product.findById(productId);
+  
+          if (!product) {
+            throw new Error(`Product with ID ${productId} not found`);
+          }
+  
+          product.startDate = startDate;
+          product.endDate = endDate;
+          product.salePercentage = salePercentage;
+  
+          product.variants.forEach((variant) => {
+            const newDiscountPrice = (variant.originalPrice * (100 - salePercentage)) / 100;
+            variant.discountPrice = newDiscountPrice;
+          });
+  
+          return await product.save();
+        })
+      );
+  
+      res.status(200).send(updatedProducts);
     } catch (error) {
-      res.status(400).send(error);
+      res.status(400).send({ message: error.message });
     }
   }
 

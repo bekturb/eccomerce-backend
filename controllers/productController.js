@@ -93,7 +93,6 @@ class ProductController {
   
       const { startDate, endDate, salePercentage, productIds } = req.body;
   
-      // Find and update products
       const updatedProducts = await Promise.all(
         productIds.map(async (productId) => {
           const product = await Product.findById(productId);
@@ -104,7 +103,7 @@ class ProductController {
   
           product.startDate = startDate;
           product.endDate = endDate;
-          product.salePercentage = salePercentage;
+          product.salePercentage = +salePercentage;
   
           product.variants.forEach((variant) => {
             const newDiscountPrice = (variant.originalPrice * (100 - salePercentage)) / 100;

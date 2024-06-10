@@ -12,7 +12,7 @@ router.get("/get-product/:id", ProductController.getOne);
 router.get("/get-product-to-update/:productId", ProductController.getOneForUpdate);
 router.put("/update/:id",  [auth, seller], ProductController.update);
 router.delete("/delete/:id",  [auth, seller],  ProductController.delete);
-router.post("/delete/multiple-products", [auth, seller], ProductController.deleteMultipleProducts)
+router.post("/delete/multiple-products", [auth, seller], ProductController.deleteMultipleProducts);
 router.put("/add-review", [auth], ProductController.createProductReview);
 router.get("/:productId/all-reviews", ProductController.getAllReviews);
 router.get("/get-personal/wishlist", [auth], ProductController.getPersonalWishList);

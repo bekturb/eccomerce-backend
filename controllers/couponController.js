@@ -26,8 +26,6 @@ class CouponController {
     }
 
     async getOne(req, res) {
-        if (!mongoose.Types.ObjectId.isValid(req.params.id))
-            return res.status(404).send("Invalid Id");
 
         let coupon = await Coupon.find({ shopId: req.user._id });
         if (!coupon) return res.status(404).send("No coupon for the given Id");

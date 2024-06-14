@@ -15,7 +15,10 @@ class CouponController {
             return res.status(400).send("Coupon code already exists!")
         }
 
-        let coupon = new Coupon(req.body);
+        let coupon = new Coupon({
+            shopId: req.user._id,
+            ...req.body
+        });
         coupon = await coupon.save();
         res.status(201).send(coupon)
     }

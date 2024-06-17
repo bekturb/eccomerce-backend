@@ -41,7 +41,7 @@ class CouponController {
         if (!mongoose.Types.ObjectId.isValid(req.params.couponId))
             return res.status(404).send("Invalid Id");
       
-          let coupon = await Coupon.findById(req.params.id)
+          let coupon = await Coupon.findById(req.params.couponId)
 
           if (!coupon) return res.status(404).send("No coupon for the given Id");
       

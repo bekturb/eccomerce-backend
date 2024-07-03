@@ -201,7 +201,7 @@ class ShopController {
         if (!shop)
             return res.status(404).send("No shop for the given Id");
 
-        return res.status(200).send({message: "You successfully changed your profile"})
+        return res.status(200).send(shop)
     }
 
     async changePassword(req,res){

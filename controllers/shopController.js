@@ -182,7 +182,6 @@ class ShopController {
     async updateProfile(req, res) {
         const updateProfileSchema = Joi.object({
             name: Joi.string().trim().required(),
-            avatar: Joi.string(),
             address: Joi.string(),
             phoneNumber: Joi.number(),
             zipCode: Joi.number(),
@@ -194,7 +193,6 @@ class ShopController {
 
         let shop = await Shop.findByIdAndUpdate(req.user._id, {
             name: req.body.name,
-            avatar: req.body.avatar,
             address: req.body.address,
             phoneNumber: req.body.phoneNumber,
             zipCode: req.body.zipCode,

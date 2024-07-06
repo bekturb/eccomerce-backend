@@ -15,6 +15,7 @@ router.get("/get-all", [auth, admin], shopController.getAll);
 router.put("/block-user/:id", [auth, admin], shopController.blockUser);
 router.put("/unblock-user/:id", [auth, admin], shopController.unBlockUser);
 router.put("/update/profile", [auth, seller], shopController.updateProfile);
+router.put("/update/profile-avatar", [auth, seller], shopController.updateProfileAvatar);
 router.put("/update/password", [auth, seller], shopController.changePassword);
 router.put("/change-password", shopController.resetPassword);
 router.put("/update-payment-methods", [auth, seller], shopController.updatePayment);

@@ -201,7 +201,26 @@ class ShopController {
         if (!shop)
             return res.status(404).send("No shop for the given Id");
 
-        return res.status(200).send(shop)
+        return res.status(200).send(shop);
+    }
+
+    async updateProfileAvatar(req, res) {
+        const updateProfileSchema = Joi.object({
+            avatar: Joi.string().required(),
+        });
+
+        const {error} = updateProfileSchema.validate(req.body);
+        if (error)
+            return res.status(400).send({message: error.details[0].message});
+
+        let shop = await Shop.findByIdAndUpdate(req.user._id, {
+            avatar: req.body.avatar,
+        });
+
+        if (!shop)
+            return res.status(404).send("No shop for the given Id");
+
+        return res.status(200).send(shop);
     }
 
     async changePassword(req,res){

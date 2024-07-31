@@ -58,10 +58,35 @@ class PasswordResetController {
                 Otp.create({otp: OTP, userId: user._id});
             })
         } else {
-            return res.status(400).send("Invalid phone/email.");
+            return res.status(400).send({message: "Invalid phone/email."});
         }
         user = await user.save();
         return res.status(201).send("OTP sent. Valid for only 2 minutes");
+    }
+
+    async verify(req, res) {
+
+        const {error} = validateVerify(req.body);
+        if (error)
+            return res.status(400).send(error.details[0].message);
+
+        let OTP = await Otp.findOne({ userId: req.params.id });
+        if (!OTP)
+            return res.status(400).send('Invalid OTP number');
+
+        const isMatch = await bcrypt.compare(req.body.otp, OTP.otp);
+
+        if (!isMatch) {
+            return res.status(400).send("Incorrect OTP or it has been expired.");
+        }
+
+        const user = await User.findById(OTP.userId);
+        if (user) {
+            await Otp.deleteOne({_id: OTP._id});
+            await res.status(200).send("Email verified successfully!");
+        } else {
+            res.status(400).send("Incorrect OTP or it has been expired.");
+        }
     }
 }
 

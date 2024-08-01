@@ -60,8 +60,7 @@ class PasswordResetController {
         } else {
             return res.status(400).send({message: "Invalid phone/email."});
         }
-        user = await user.save();
-        return res.status(201).send("OTP sent. Valid for only 2 minutes");
+        return res.status(201).send({message: "OTP sent. Valid for only 2 minutes", user});
     }
 
     async verify(req, res) {

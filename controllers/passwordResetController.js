@@ -83,7 +83,7 @@ class PasswordResetController {
         const user = await User.findById(OTP.userId);
         if (user) {
             await Otp.deleteOne({_id: OTP._id});
-            await res.status(200).send("Email verified successfully!");
+            await res.status(200).send({message: "Email verified successfully!", user});
         } else {
             res.status(400).send("Incorrect OTP or it has been expired.");
         }

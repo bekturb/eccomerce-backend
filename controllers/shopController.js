@@ -422,11 +422,11 @@ class ShopController {
         }
 
         const salt = await bcrypt.genSalt(Number(process.env.SALT));
-        shop.hash_password = await bcrypt.hash(req.body.newPassword, salt);
+        shop.password = await bcrypt.hash(req.body.newPassword, salt);
 
         shop = await shop.save();
 
-        res.status(200).send("password reset successfully");
+        res.status(200).send("Password reset successfully");
 
     }
 

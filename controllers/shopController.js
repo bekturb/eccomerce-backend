@@ -368,7 +368,7 @@ class ShopController {
         if (error)
             return res.status(400).send(error.details[0].message);
 
-        let OTP = await ShopOtp.findOne({ userId: req.params.id });
+        let OTP = await ShopOtp.findOne({ shopId: req.params.id });
         if (!OTP)
             return res.status(400).send('Invalid OTP number');
 
@@ -378,7 +378,7 @@ class ShopController {
             return res.status(400).send("Incorrect OTP or it has been expired.");
         }
 
-        const seller = await Shop.findById(OTP.sellerId);
+        const seller = await Shop.findById(OTP.shopId);
         if (seller) {
             await ShopOtp.deleteOne({_id: OTP._id});
             await res.status(200).send({message: "Email verified successfully!", seller});

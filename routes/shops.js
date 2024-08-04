@@ -19,7 +19,7 @@ router.put("/update/profile-avatar", [auth, seller], shopController.updateProfil
 router.put("/update/password", [auth, seller], shopController.changePassword);
 router.put("/change-password", shopController.resetPassword);
 router.post("/post-email/to-reset-password", shopController.postEmail);
-router.post("/verify-otp/to-reset-password/:id", shopController.verify);
+router.post("/verify-otp/to-reset-password/:id", shopController.verifyEmailForReset);
 router.put("/update-payment-methods", [auth, seller], shopController.updatePayment);
 router.delete("/delete-withdraw-method", [auth, seller], shopController.deletePaymentMethod);
 

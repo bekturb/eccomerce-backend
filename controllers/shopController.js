@@ -346,7 +346,7 @@ class ShopController {
 
         if (validateEmail(req.body.email)) {
             await sendEmail(seller.email, "Reset password", `Your OTP is ${OTP}.\nDo not share with anyone`);
-            await ShopOtp.create({otp: OTP, sellerId: seller._id});
+            await ShopOtp.create({otp: OTP, shopId: seller._id});
         } else if (validateNumber(req.body.email)) {
             client.messages
                 .create({
@@ -354,7 +354,7 @@ class ShopController {
                     from:  process.env.TWILLIO_PHONE_NUMBER,
                     to: req.body.email
                 }).then(() => {
-                ShopOtp.create({otp: OTP, sellerId: seller._id});
+                ShopOtp.create({otp: OTP, shopId: seller._id});
             })
         } else {
             return res.status(400).send({message: "Invalid phone/email."});
@@ -362,7 +362,7 @@ class ShopController {
         return res.status(201).send({message: "OTP sent. Valid for only 2 minutes", seller});
     }
 
-    async verify(req, res) {
+    async verifyEmailForReset(req, res) {
 
         const {error} = validateVerify(req.body);
         if (error)

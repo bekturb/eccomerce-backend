@@ -11,6 +11,8 @@ const {Shop, validateShop} = require("../models/shop");
 
 class ShopController {
 
+    certainUser = ""
+
     async getMe(req, res) {
         const shop = await Shop.findById(req.user._id).select("-password");
         res.send(shop);
@@ -305,6 +307,59 @@ class ShopController {
             new: true,
         });
         res.status(200).send(blockShop)
+    }
+
+    async postEmail(req, res) {
+
+        function validateEmail(email) {
+            const re =
+                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(String(email).toLowerCase());
+        }
+
+        function validateNumber(email) {
+            const phonePattern = /^\+(?:[0-9] ?){6,14}[0-9]$/;
+
+            if (phonePattern.test(email)  && !isNaN(email)) {
+                return true;
+            }
+            return false;
+        }
+
+        const emailSchema = Joi.object({
+            email: Joi.string().email().required().label("Email")
+        });
+
+        const {error} = emailSchema.validate(req.body);
+        if (error)
+            return res.status(400).send({message: error.details[0].message})
+
+        let seller = await Shop.findOne({email: req.body.email});
+        if (!seller)
+            return res.status(400).send({message: "Seller with given email does not exist"});
+
+        this.certainUser = seller._id
+
+        const OTP = otpGenerator.generate(6, {
+            digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false
+        });
+
+        if (validateEmail(req.body.email)) {
+            await sendEmail(seller.email, "Reset password", `Your OTP is ${OTP}.\nDo not share with anyone`);
+            await ShopOtp.create({otp: OTP, sellerId: seller._id});
+        } else if (validateNumber(req.body.email)) {
+            client.messages
+                .create({
+                    body: `Your OTP is ${OTP}.\nDo not share with anyone`,
+                    from:  process.env.TWILLIO_PHONE_NUMBER,
+                    to: req.body.email
+                }).then(() => {
+                ShopOtp.create({otp: OTP, sellerId: seller._id});
+            })
+        } else {
+            return res.status(400).send({message: "Invalid phone/email."});
+        }
+        return res.status(201).send({message: "OTP sent. Valid for only 2 minutes", seller});
     }
 
     async resetPassword(req, res) {

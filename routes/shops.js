@@ -18,6 +18,7 @@ router.put("/update/profile", [auth, seller], shopController.updateProfile);
 router.put("/update/profile-avatar", [auth, seller], shopController.updateProfileAvatar);
 router.put("/update/password", [auth, seller], shopController.changePassword);
 router.put("/change-password", shopController.resetPassword);
+router.put("/post-email/to-reset-password", shopController.postEmail);
 router.put("/update-payment-methods", [auth, seller], shopController.updatePayment);
 router.delete("/delete-withdraw-method", [auth, seller], shopController.deletePaymentMethod);
 

@@ -13,6 +13,7 @@ const authToken = process.env.AUTH_TOKEN;
 const client = require('twilio')(accountSid, authToken);
 
 class UserController {
+
     async getMe(req, res) {
         const user = await User.findById(req.user._id).select("-password");
         res.send(user);
@@ -309,7 +310,7 @@ class UserController {
 
         user = await user.save();
 
-        res.status(200).send("password reset successfully");
+        res.status(200).send("Password reset successfully");
 
     }
 

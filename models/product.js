@@ -137,6 +137,7 @@ function validateProject(project) {
             Joi.object({
                 color: Joi.string().required(),
                 originalPrice: Joi.number().required(),
+                discountPrice: Joi.number(),
                 quantity: Joi.number().required(),
                 sold: Joi.number().default(0),
                 specificAttributes: Joi.any(),

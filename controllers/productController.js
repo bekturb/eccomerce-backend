@@ -175,6 +175,8 @@ class ProductController {
   async update(req, res) {
     const sellerId = req.user._id;
 
+    console.log(req.body, "req");
+
     if (!mongoose.Types.ObjectId.isValid(req.params.id))
       return res.status(404).send("Invalid Id");
 

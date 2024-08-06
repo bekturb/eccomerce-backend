@@ -434,6 +434,8 @@ class ProductController {
       (concept) => concept.name
     );
 
+    console.log(concepts, "concepts");
+
     const query = {
       $or: [
         { "variants.images.url": { $in: concepts } },

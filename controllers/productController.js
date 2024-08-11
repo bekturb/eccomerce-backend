@@ -433,9 +433,7 @@ class ProductController {
     const concepts = clarifaiResponse.outputs[0].data.concepts.map(
       (concept) => concept.name
     );
-
-    console.log(concepts, "concepts");
-
+    
     const query = {
       $or: [
         { "variants.images.url": { $in: concepts } },

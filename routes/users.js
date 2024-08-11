@@ -13,6 +13,7 @@ router.get("/", [auth], userController.getAll);
 router.put("/block-user/:id", [auth, admin], userController.blockUser);
 router.put("/unblock-user/:id", [auth, admin], userController.unBlockUser);
 router.put("/update/profile", [auth], userController.updateProfile);
+router.put("/update/profile-picture", [auth, seller], userController.updateprofilePicture);
 router.put("/update/password", [auth], userController.changePassword);
 router.put("/:id/update/role", [auth, admin], userController.updateRole);
 router.put("/change-password", userController.resetPassword);

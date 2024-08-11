@@ -196,6 +196,25 @@ class UserController {
         return res.status(200).send({message: "You successfully changed your profile"})
     }
 
+    async updateprofilePicture(req, res) {
+        const updateProfileSchema = Joi.object({
+            profilePicture: Joi.string().required(),
+        });
+
+        const {error} = updateProfileSchema.validate(req.body);
+        if (error)
+            return res.status(400).send({message: error.details[0].message});
+
+        let user = await User.findByIdAndUpdate(req.user._id, {
+            profilePicture: req.body.profilePicture,
+        });
+
+        if (!user)
+            return res.status(404).send("No user for the given Id");
+
+        return res.status(200).send(user);
+    }
+
     async changePassword(req, res) {
 
         const passwordSchema = Joi.object({

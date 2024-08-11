@@ -196,7 +196,7 @@ class UserController {
         return res.status(200).send({message: "You successfully changed your profile"})
     }
 
-    async updateprofilePicture(req, res) {
+    async updateProfilePicture(req, res) {
         const updateProfileSchema = Joi.object({
             profilePicture: Joi.string().required(),
         });

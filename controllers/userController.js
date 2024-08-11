@@ -191,7 +191,7 @@ class UserController {
         if (!user)
             return res.status(404).send("No user for the given Id");
 
-        return res.status(200).send({message: "You successfully changed your profile"})
+        return res.status(200).send(user);
     }
 
     async updateProfilePicture(req, res) {

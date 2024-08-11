@@ -175,7 +175,6 @@ class UserController {
         const updateProfileSchema = Joi.object({
             firstName: Joi.string().trim().min(3).max(20).required(),
             lastName: Joi.string().trim().min(3).max(20).required(),
-            profilePicture: Joi.string(),
             phoneNumber: Joi.number(),
         });
 
@@ -186,7 +185,6 @@ class UserController {
         let user = await User.findByIdAndUpdate(req.user._id, {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
-            profilePicture: req.body.profilePicture,
             phoneNumber: req.body.phoneNumber,
         });
 

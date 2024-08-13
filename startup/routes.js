@@ -17,6 +17,8 @@ const colorRoute = require("../routes/colors");
 const couponRoute = require("../routes/coupons");
 const orderRoute = require("../routes/orders");
 const pageRoute = require("../routes/pages");
+const conversationRoute = require("../routes/conversations");
+const messageRoute = require("../routes/messages");
 const passwordResetRoute = require("../routes/resetPassword");
 const imagesRoute = require("../routes/images");
 
@@ -39,10 +41,11 @@ module.exports = function (app) {
     app.use('/api/categories', categoryRoute);
     app.use('/api/brands', brandRoute);
     app.use('/api/colors', colorRoute);
+    app.use('/api/conversations', conversationRoute);
+    app.use('/api/messages', messageRoute);
     app.use('/api/coupon', couponRoute);
     app.use('/api/pages', pageRoute);
     app.use('/api/password-reset', passwordResetRoute);
-
     app.use('/api/upload', imagesRoute);
     app.use(errorMiddleware);
 }

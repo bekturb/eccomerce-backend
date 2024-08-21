@@ -5,8 +5,8 @@ const auth = require("../middlewares/auth");
 const seller = require("../middlewares/seller");
 
 router.post("/create", ConversationController.createConversation);
-router.get("/get-seller-conversations/:id", seller, ConversationController.getSellerConversations);
-router.get("/get-user-conversations/:id", auth,  ConversationController.getUserConversations);
-router.put("/update-last-message/:id", ConversationController.getUserConversations);
+router.get("/get-seller-conversations", [auth, seller], ConversationController.getSellerConversations);
+router.get("/get-user-conversations", [auth],  ConversationController.getUserConversations);
+router.put("/update-last-message/:id", ConversationController.updateLastMessage);
 
 module.exports = router;

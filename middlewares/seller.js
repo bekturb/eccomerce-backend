@@ -1,4 +1,5 @@
 const {Shop} = require("../models/shop");
+
 module.exports = async function admin(req, res, next) {
 
     let shop = await Shop.findById(req.user._id);

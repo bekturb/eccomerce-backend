@@ -1,11 +1,9 @@
-const { Conversation, validate } = require("../models/conversation");
+const { Conversation } = require("../models/conversation");
 const mongoose = require("mongoose");
 
 class ConversationController {
+
   async createConversation(req, res) {
-    const { error } = validate(req.body);
-    if (error)
-      return res.status(400).send({ message: error.details[0].message });
 
     const { groupTitle, userId, sellerId } = req.body;
 
@@ -25,12 +23,12 @@ class ConversationController {
   }
 
   async getSellerConversations(req, res) {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id))
-        return res.status(404).send("Invalid Id");
+
+    const sellerId = req.user._id
 
     const conversations = await Conversation.find({
       members: {
-        $in: [req.params.id],
+        $in: [sellerId],
       },
     }).sort({ updatedAt: -1, createdAt: -1 });
 
@@ -41,12 +39,12 @@ class ConversationController {
   }
 
   async getUserConversations(req, res) {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id))
-        return res.status(404).send("Invalid Id");
+    
+    const userId = req.user._id
 
     const conversations = await Conversation.find({
       members: {
-        $in: [req.params.id],
+        $in: [userId],
       },
     }).sort({ updatedAt: -1, createdAt: -1 });
 

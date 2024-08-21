@@ -1,6 +1,5 @@
 require("dotenv").config();
-const express = require('express');
-const app = express();
+const {app, servers} = require("./socket/socket") 
 const winston = require('winston');
 require("./startup/logging")();
 require('./startup/routes')(app);
@@ -11,7 +10,7 @@ require("./startup/salesResetTask");
 
 const port = process.env.PORT || 5000;
 const localAddress = process.env.LOCAL_ADDRESS
-const server = app.listen(port, localAddress, () => {
+const server = servers.listen(port, localAddress, () => {
     winston.info(`Server started on port ${port}`);
 });
 

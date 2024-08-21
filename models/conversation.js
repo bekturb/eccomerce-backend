@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const Joi = require("joi");
 
 const conversationSchema = new mongoose.Schema({
     groupTitle: {
@@ -18,19 +17,7 @@ const conversationSchema = new mongoose.Schema({
 },
 { timestamps: true });
 
-const Converstion = mongoose.model("Conversation", conversationSchema);
+const Conversation = mongoose.model("Conversation", conversationSchema);
 
-function validateConversation(conv){
-    const schema = Joi.object({
-        groupTitle: Joi.string().required(),
-        members: Joi.array(),
-        lastMessage: Joi.string().trim(),
-        lastMessageId: Joi.string()
-    });
-
-    return schema.validate(conv);
-}
-
-exports.Converstion = Converstion;
-exports.validate = validateConversation;
+exports.Conversation = Conversation;
 exports.conversationSchema = conversationSchema;

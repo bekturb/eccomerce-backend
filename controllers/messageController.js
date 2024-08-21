@@ -1,17 +1,25 @@
-const { Message, validate } = require("../models/message");
+const { Message } = require("../models/message");
+const cloudinary = require('cloudinary').v2;
 const mongoose = require("mongoose");
 
 class MessageController {
   async createMessage(req, res) {
-    const { error } = validate(req.body);
-    if (error)
-      return res.status(400).send({ message: error.details[0].message });
 
-    const messageData = req.body;
+    const messageData = req.body;    
 
-    messageData.images = req.body.images;
+    if (req.body.images) {
+      const myCloud = await cloudinary.uploader.upload(req.body.images, {
+        folder: "messages",
+      });      
+            
+      messageData.images = {
+        public_id: myCloud.public_id,
+        url: myCloud.url,
+      };
+    }
+
     messageData.conversationId = req.body.conversationId;
-    messageData.sender = req.body.sender;
+    messageData.sender = req.user._id;
     messageData.text = req.body.text;
     
     const message = new Message({
@@ -33,7 +41,7 @@ class MessageController {
     if (!mongoose.Types.ObjectId.isValid(req.params.id))
         return res.status(404).send("Invalid Id");
 
-    const messages = await Messages.find({
+    const messages = await Message.find({
         conversationId: req.params.id,
       });
 

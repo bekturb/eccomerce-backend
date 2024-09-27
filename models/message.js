@@ -10,6 +10,13 @@ const messageSchema = new mongoose.Schema({
     sender: {
       type: String,
     },
+    receiver: {
+      type: String,
+    },
+    seen: {
+      type: Boolean,
+      default: false,
+    },
     images: {
       public_id: {
         type: String,

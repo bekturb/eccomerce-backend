@@ -1,26 +1,6 @@
 const { Conversation } = require("../models/conversation");
-const mongoose = require("mongoose");
 
 class ConversationController {
-
-  async createConversation(req, res) {
-
-    const { groupTitle, userId, sellerId } = req.body;
-
-    const isConversationExist = await Conversation.findOne({ groupTitle });
-
-    if (isConversationExist) {
-      const conversation = isConversationExist;
-      res.status(201).send({ succes: true, conversation });
-    } else {
-      const conversation = new Conversation({
-        members: [userId, sellerId],
-        groupTitle,
-      });
-      const savedConv = await conversation.save();
-      res.status(201).send(savedConv);
-    }
-  }
 
   async getSellerConversations(req, res) {
 
@@ -54,18 +34,19 @@ class ConversationController {
     });
   }
 
-  async updateLastMessage(req, res) {
-    const { lastMessage, lastMessageId } = req.body;
+  async getConversation(req, res) {
+    
+    const userId = req.user._id;
+    const receiverId  = req.params.receiverId;       
 
-      const conversation = await Conversation.findByIdAndUpdate(req.params.id, {
-        lastMessage,
-        lastMessageId,
-      });
+    let conversation = await Conversation.findOne({ members: { $all: [userId, receiverId] }});    
 
-      res.status(201).send({
-        success: true,
-        conversation,
-      });
+    if (!conversation) return res.status(400).send("Not found conversation");
+
+    res.status(201).send({
+      success: true,
+      conversation,
+    });
   }
 }
 

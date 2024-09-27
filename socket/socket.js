@@ -29,12 +29,12 @@ const getUser = (receiverId) => {
   return users.find((user) => user.userId === receiverId);
 };
 
-const createMessage = ({ senderId, receiverId, text, images }) => ({
+const createMessage = ({ senderId, receiverId, text, images, seen }) => ({
   senderId,
   receiverId,
   text,
   images,
-  seen: false,
+  seen,
 });
 
 io.on("connection", (socket) => {
@@ -47,10 +47,10 @@ io.on("connection", (socket) => {
 
         const messages = {};
 
-        socket.on("sendMessage", ({ senderId, receiverId, text, images }) => {
-            const message = createMessage({ senderId, receiverId, text, images });
+        socket.on("sendMessage", ({ senderId, receiverId, text, images, seen }) => {
+            const message = createMessage({ senderId, receiverId, text, images, seen });
         
-            const user = getUser(receiverId);            
+            const user = getUser(receiverId);         
         
             if (!messages[receiverId]) {
               messages[receiverId] = [message];
@@ -60,6 +60,16 @@ io.on("connection", (socket) => {
             }
         
             io.to(user?.socketId).emit("getMessage", message);
+            io.to(user.socketId).emit("getNotification", {
+              senderId,
+              isRead: false,
+              date: new Date(),
+            })
+          });
+
+          socket.on("addConversation", ({conversation, userId}) => {    
+            const user = getUser(userId);
+           io.to(user?.socketId).emit("getConversation", conversation)
           });
 
           socket.on("messageSeen", ({ senderId, receiverId, messageId }) => {
@@ -80,15 +90,6 @@ io.on("connection", (socket) => {
                 });
               }
             }
-          });
-
-          socket.on("updateLastMessage", ({ lastMessage, lastMessageId, conversationId }) => {   
-                     
-            io.emit("getLastMessage", {
-              lastMessage,
-              lastMessageId,
-              conversationId
-            });
           });
 
           socket.on("disconnect", () => {

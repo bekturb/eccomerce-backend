@@ -6,7 +6,7 @@ const winston = require('winston');
 const app = express();
 
 const servers = http.createServer(app);
-const clientUrl = env.CLIENT_URL
+const clientUrl = process.env.CLIENT_URL
 
 const io = new Server(servers, {
     cors: {

@@ -6,10 +6,11 @@ const winston = require('winston');
 const app = express();
 
 const servers = http.createServer(app);
+const clientUrl = env.CLIENT_URL
 
 const io = new Server(servers, {
     cors: {
-        origin:["http://localhost:3000"],
+        origin:[clientUrl],
         methods:["GET", "POST"]
     }
 });

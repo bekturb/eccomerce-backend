@@ -59,9 +59,9 @@ io.on("connection", (socket) => {
             } else {
               messages[receiverId].push(message);
             }
-        
+
             io.to(user?.socketId).emit("getMessage", message);
-            io.to(user.socketId).emit("getNotification", {
+            io.to(user?.socketId).emit("getNotification", {
               senderId,
               isRead: false,
               date: new Date(),
